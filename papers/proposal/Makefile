@@ -8,4 +8,4 @@ all:
 
 
 clean:
-	rm -fv *.aux *.pdf *.log *.bbl *.blg
+	rm -fv *.aux *.pdf *.log *.bbl *.blg *.out

@@ -4,3 +4,8 @@
 *.aux
 *.log
 *.pdf
+*.out
+
+#vim
+*.swp
+

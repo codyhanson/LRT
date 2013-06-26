@@ -3,6 +3,11 @@
 
 \usepackage{graphicx}
 
+
+\usepackage{url}
+\usepackage{hyperref} 
+\hypersetup{breaklinks} 
+
 \begin{document}
 \title{LRT: The Live Remote Trace service for Mobile Debugging}
 \author{Cody Hanson, Ross Nordstrom}
@@ -29,6 +34,8 @@ complexity of the system that is impossible to recreate perfectly in an
 emulation layer. Real users and their environments also may exercise your app in
 a way you have not anticipated. 
 
+\cite{Enck:2010:TIT:1924943.1924971}
+
 We propose a system which will allow an internet connected application to easily
 embed lightweight instrumentation into their application code to enable real 
 time tracing of program execution to a cloud service. Events are collected by 
@@ -44,7 +51,7 @@ information to answer questions such as “which parts of the user interface wer
 confusing to the user?”, and “Did they spend too much time wondering what to do 
 next?”, or “which flows are common for users to take, and could thus be 
 streamlined to create a better user experience?”. Problems of this nature are 
-discussed in [1].
+discussed in \cite{WebAntiPattern}.
 
 \section{Related Work} 
 Existing techniques for tracing program execution are decades old, and usually 
@@ -52,10 +59,10 @@ involve writing lines of output that the programmer purposefully incorporates
 in the code into a file on disk, or exported to a logging server, as in syslog. 
 Disk output can slow down a program, and the amount of log information that 
 builds up could be too large for the mobile device to store. The work done in 
-[2] and [3] has the remote debugging capability for the iOS platform, although 
-does not have the analytics that we will propose, and it requires user action 
+\cite{NSLogger} has the remote debugging capability for the iOS platform, although 
+it does not have the analytics that we will propose, and it requires user action 
 to implement the tracing. Android has remote debugging built into the developer 
-SDK [6], but this requires your app to be tethered to a development PC.
+SDK \cite{AndroidRemoteDebugTool}, but this requires your app to be tethered to a development PC.
 
 \section{Proposed design}
 One of the key goals of any instrumentation inserted into an application is 
@@ -81,20 +88,9 @@ the phone, which will then buffer and export the messages to the server.
 
 
 
-[1] Web Design Anti-patterns http://webdesign.tutsplus.com/articles/user-experience-articles/the-world-of-ux-anti-patterns/?utm_content=buffer5f64b&utm_source=buffer&utm_medium=linkedin&utm_campaign=Buffer
 
-[2] NSLogger - Remote logging for iOS https://github.com/fpillet/NSLogger
-
-[3] Cocoa Lumberjack - remote logging for iOS https://github.com/robbiehanson/CocoaLumberjack
-
-[4] microlog4android - https://code.google.com/p/microlog4android/
-
-[5] Websocket Protocol - http://tools.ietf.org/html/rfc6455
-
-[6] Android remote debugging tool https://developers.google.com/chrome-developer-tools/docs/remote-debugging
-
-
-\bibliography{citations}
+\bibliography{citations}{}
+\bibliographystyle{plain}
 
 \end{document}
 

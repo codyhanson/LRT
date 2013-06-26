@@ -1,0 +1,100 @@
+
+\documentclass[11pt]{article}
+
+\usepackage{graphicx}
+
+\begin{document}
+\title{LRT: The Live Remote Trace service for Mobile Debugging}
+\author{Cody Hanson, Ross Nordstrom}
+\date{June 2013}
+
+\maketitle
+
+\begin{abstract}
+%\boldmath
+balkasldkfhalsdkhfa;kdsf
+balkasldkfhalsdkhfa;kdsf
+balkasldkfhalsdkhfa;kdsf
+balkasldkfhalsdkhfa;kdsf
+
+\end{abstract}
+
+\section{Introduction}
+One of the key tasks a mobile application developer must undertake is testing 
+their application on real live hardware, and with real users. This is important 
+because there are many features that are available to apps running on hardware 
+that are not available in emulation software. These include GPS, accelerometer, 
+magnetometer, gyroscope, and Cellular data, as well as the rest of the 
+complexity of the system that is impossible to recreate perfectly in an 
+emulation layer. Real users and their environments also may exercise your app in
+a way you have not anticipated. 
+
+We propose a system which will allow an internet connected application to easily
+embed lightweight instrumentation into their application code to enable real 
+time tracing of program execution to a cloud service. Events are collected by 
+the service which can perform analytics on your program execution as it is out 
+in the wild.
+
+Successful completion of this work will serve to accomplish a few key 
+improvements for testing mobile applications. This instrumentation will provide 
+the developer with a trace of the program running on actual hardware, not just 
+an emulator, as well as real life user and environment interaction. With this 
+body of program flow data collected on the server, we can mine it for useful 
+information to answer questions such as “which parts of the user interface were 
+confusing to the user?”, and “Did they spend too much time wondering what to do 
+next?”, or “which flows are common for users to take, and could thus be 
+streamlined to create a better user experience?”. Problems of this nature are 
+discussed in [1].
+
+\section{Related Work} 
+Existing techniques for tracing program execution are decades old, and usually 
+involve writing lines of output that the programmer purposefully incorporates 
+in the code into a file on disk, or exported to a logging server, as in syslog. 
+Disk output can slow down a program, and the amount of log information that 
+builds up could be too large for the mobile device to store. The work done in 
+[2] and [3] has the remote debugging capability for the iOS platform, although 
+does not have the analytics that we will propose, and it requires user action 
+to implement the tracing. Android has remote debugging built into the developer 
+SDK [6], but this requires your app to be tethered to a development PC.
+
+\section{Proposed design}
+One of the key goals of any instrumentation inserted into an application is 
+that it should not adversely affect the performance or behavior of the 
+application execution. In order to minimize the overhead of exporting trace 
+events we are planning on using the relatively new Websocket protocol [5], 
+which keeps open a bidirectional communications channel over the HTTP port. 
+By keeping open a long lived websocket connection and sending size efficient 
+messages, we do not suffer the TCP and HTTP connection establishment overhead 
+for each trace event. Events can also be compressed and buffered for when a 
+network connection is again available.  We will use a websocket enabled HTTP 
+server, and establish feasibility of running the server on a hosted cloud 
+provider, or on the LAN if performance dictates. If the cloud access penalty is 
+acceptable, we believe this could be a superior use model that would make people
+more likely to use the technology.
+
+If time permits, we would like to build an automated instrumentation insertion 
+script, which would detect the appropriate spots in the App code to insert our 
+code. This would make it easy for any developer to apply this  LRT capability to
+an existing app, just by running the script and making a debug build of their 
+app. Code inserted into the App will communicate with a background service on 
+the phone, which will then buffer and export the messages to the server.
+
+
+
+[1] Web Design Anti-patterns http://webdesign.tutsplus.com/articles/user-experience-articles/the-world-of-ux-anti-patterns/?utm_content=buffer5f64b&utm_source=buffer&utm_medium=linkedin&utm_campaign=Buffer
+
+[2] NSLogger - Remote logging for iOS https://github.com/fpillet/NSLogger
+
+[3] Cocoa Lumberjack - remote logging for iOS https://github.com/robbiehanson/CocoaLumberjack
+
+[4] microlog4android - https://code.google.com/p/microlog4android/
+
+[5] Websocket Protocol - http://tools.ietf.org/html/rfc6455
+
+[6] Android remote debugging tool https://developers.google.com/chrome-developer-tools/docs/remote-debugging
+
+
+\bibliography{citations}
+
+\end{document}
+

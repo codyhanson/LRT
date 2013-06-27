@@ -20,10 +20,7 @@
 
 \begin{abstract}
 %\boldmath
-balkasldkfhalsdkhfa;kdsf
-balkasldkfhalsdkhfa;kdsf
-balkasldkfhalsdkhfa;kdsf
-balkasldkfhalsdkhfa;kdsf
+/* A concise and informative abstract will live here one day. */
 
 \end{abstract}
 
@@ -36,8 +33,6 @@ magnetometer, gyroscope, and Cellular data, as well as the rest of the
 complexity of the system that is impossible to recreate perfectly in an 
 emulation layer. Real users and their environments also may exercise your app in
 a way you have not anticipated. 
-
-\cite{Enck:2010:TIT:1924943.1924971}
 
 We propose a system which will allow an internet connected application to easily
 embed lightweight instrumentation into their application code to enable real 
@@ -67,13 +62,30 @@ it does not have the analytics that we will propose, and it requires user action
 to implement the tracing. Android has remote debugging built into the developer 
 SDK \cite{AndroidRemoteDebugTool}, but this requires your app to be tethered to a development PC.
 
+Several businesses have been formed to address the need in this space, including
+Flurry \cite{Flurry} which provides app developers with high level metrics on
+user behavior and app performance, and Heatmaps \cite{Heatmaps}, an iOS specific
+service which gives developers deep insight to how users interact with a touch
+screen, and how they transition through the screens of an app. 
+Crashlytics \cite{Crashlytics} is a popular service that exports detailed
+crash analysis data from user devices to the cloud. There is a 'live' component,
+to the service, but it is focused on presenting crash statistics as they happen,
+not program step-by-step trace data.
+
+There has also been pertinent work done in more academic circles. 
+In \cite{ProfileDroid}, a multi-layer analysis tool for Android apps is presented,
+which employs a technique to track user input via the Android tools 
+'getevent' and 'logcat'. This work also collects system call invocation via the
+'strace' tool.
+
 \section{Proposed design}
 One of the key goals of any instrumentation inserted into an application is 
 that it should not adversely affect the performance or behavior of the 
 application execution. In order to minimize the overhead of exporting trace 
-events we are planning on using the relatively new Websocket protocol [5], 
-which keeps open a bidirectional communications channel over the HTTP port. 
-By keeping open a long lived websocket connection and sending size efficient 
+events we are planning on using the relatively new Websocket protocol 
+\cite{WebsocketRFC} , which keeps open a bidirectional communications channel 
+over the HTTP port.  By keeping open a long lived 
+websocket connection and sending size efficient 
 messages, we do not suffer the TCP and HTTP connection establishment overhead 
 for each trace event. Events can also be compressed and buffered for when a 
 network connection is again available.  We will use a websocket enabled HTTP 

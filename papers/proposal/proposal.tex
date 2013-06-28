@@ -25,16 +25,17 @@
 
 \section{Introduction}
 One of the key tasks a mobile application developer must undertake is testing 
-their application on real live hardware, and with real users. This is important 
+their application on real hardware, and with real users. This is important 
 because there are many features that are available to apps running on hardware 
 that are not available in emulation software. These include GPS, accelerometer, 
 magnetometer, gyroscope, and Cellular data, as well as the rest of the 
 complexity of the system that is impossible to recreate perfectly in an 
-emulation layer. Real users and their environments also may exercise your app in
-a way you have not anticipated. 
+emulation layer. Real users and their environments also may exercise apps in
+a way developers have not anticipated. 
 
-We propose a system which will allow an internet connected application to easily
-embed lightweight instrumentation into their application code to enable real 
+We propose a system which will allow developers of an an internet connected 
+application to easily embed lightweight instrumentation 
+into their application code to enable real 
 time tracing of program execution to a cloud service. Events are collected by 
 the service which can perform analytics on your program execution as it is out 
 in the wild.
@@ -76,34 +77,42 @@ generalize the work from other fields to apply to LRT, we can save ourselves
 time and boost the quality of our research. In \cite{ProfileDroid}, a 
 multi-layer analysis tool for Android apps is presented, which employs a 
 technique to track user input via the Android tools 'getevent' and 'logcat'. 
-This work also collects system call invocation via the 'strace' tool. We 
-can also draw ideas from the taint tracing techniques discussed in 
+This work also collects system call invocation via the 'strace' tool. 
+
+We can also draw ideas from the taint tracing techniques discussed in 
 \cite{TaintDroid} as a way to implement our trace hooks while minimizing 
 the overhead of our tool. We will have to weigh the trade-offs of working 
 near the kernel as they did against the convenience and speed of development 
-of using built-in Android tools like Broadcasts. On the other hand, 
-\cite{PeriodicTransfers} will be a powerful resource for implementing our 
-event reporting service with a minimal resource consumption.
+of using built-in Android tools like Broadcasts.  
+The techniques discussed in \cite{PeriodicTransfers} will be a 
+powerful resource for implementing our 
+event reporting service with energy and network resource consumption.
 
 \section{Proposed design}
 One of the key goals of any instrumentation inserted into an application is 
 that it should not adversely affect the performance or behavior of the 
 application execution. In order to minimize the overhead of exporting trace 
 events we are planning on using the relatively new Websocket protocol 
-\cite{WebsocketRFC} , which keeps open a bidirectional communications channel 
-over the HTTP port.  By keeping open a long lived 
+\cite{WebsocketRFC}, which keeps open a bidirectional communications channel 
+over the HTTP port. By keeping open a long lived 
 websocket connection and sending size efficient 
 messages, we do not suffer the TCP and HTTP connection establishment overhead 
-for each trace event. Events can also be compressed and buffered for when a 
-network connection is again available.  We will use a websocket enabled HTTP 
+for each trace event. Event messages can also be compressed and buffered for when a 
+network connection is again available. We will use a websocket enabled HTTP 
 server, and establish feasibility of running the server on a hosted cloud 
 provider, or on the LAN if performance dictates. If the cloud access penalty is 
 acceptable, we believe this could be a superior use model that would make people
-more likely to use the technology.
+more likely to use the technology. 
+
+If our study of \cite{PeriodicTransfers} dictates that
+our instrumentation should follow a more sparse communications pattern, we may abandon the
+websocket stategy in favor of a RESTful API\cite{REST} design. If communications
+only happen infrequently in order to save resources, the new connection overhead for
+each HTTP request will be acceptable.
 
 If time permits, we would like to build an automated instrumentation insertion 
 script, which would detect the appropriate spots in the App code to insert our 
-code. This would make it easy for any developer to apply this  LRT capability to
+code. This would make it easy for any developer to apply this LRT capability to
 an existing app, just by running the script and making a debug build of their 
 app. Code inserted into the App will communicate with a background service on 
 the phone, which will then buffer and export the messages to the server.

@@ -1,4 +1,3 @@
-
 \documentclass[11pt]{article}
 
 \usepackage{graphicx}
@@ -72,11 +71,19 @@ crash analysis data from user devices to the cloud. There is a 'live' component,
 to the service, but it is focused on presenting crash statistics as they happen,
 not program step-by-step trace data.
 
-There has also been pertinent work done in more academic circles. 
-In \cite{ProfileDroid}, a multi-layer analysis tool for Android apps is presented,
-which employs a technique to track user input via the Android tools 
-'getevent' and 'logcat'. This work also collects system call invocation via the
-'strace' tool.
+There has also been pertinent work done in more academic circles. If we can 
+generalize the work from other fields to apply to LRT, we can save ourselves 
+time and boost the quality of our research. In \cite{ProfileDroid}, a 
+multi-layer analysis tool for Android apps is presented, which employs a 
+technique to track user input via the Android tools 'getevent' and 'logcat'. 
+This work also collects system call invocation via the 'strace' tool. We 
+can also draw ideas from the taint tracing techniques discussed in 
+\cite{TaintDroid} as a way to implement our trace hooks while minimizing 
+the overhead of our tool. We will have to weigh the trade-offs of working 
+near the kernel as they did against the convenience and speed of development 
+of using built-in Android tools like Broadcasts. On the other hand, 
+\cite{PeriodicTransfers} will be a powerful resource for implementing our 
+event reporting service with a minimal resource consumption.
 
 \section{Proposed design}
 One of the key goals of any instrumentation inserted into an application is 

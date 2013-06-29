@@ -16,6 +16,9 @@
 
 package io.clh.lrt.androidservice;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -85,6 +88,8 @@ public class TraceListenerService extends Service {
 	    // Get the HandlerThread's Looper and use it for our Handler 
 	    mServiceLooper = thread.getLooper();
 	    mServiceHandler = new ServiceHandler(mServiceLooper);
+	    
+	    setNotification();
 	  }
 
 	  @Override
@@ -143,4 +148,25 @@ public class TraceListenerService extends Service {
 				}
 		    }
 		};
+		
+		private void setNotification() {
+			NotificationManager notificationManager =
+				    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+				int icon = R.drawable.ic_launcher;
+				CharSequence notiText = "LRT Service message!";
+				long meow = System.currentTimeMillis();
+
+				Notification notification = new Notification(icon, notiText, meow);
+
+				Context context = getApplicationContext();
+				CharSequence contentTitle = "LRT notification";
+				CharSequence contentText = "Some LRT thing has happened!!";
+				Intent notificationIntent = new Intent(this, MainActivity.class);
+				PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+				notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+
+				int SERVER_DATA_RECEIVED = 1;
+				notificationManager.notify(SERVER_DATA_RECEIVED, notification);
+		}
 	}

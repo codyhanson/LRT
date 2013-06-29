@@ -2,7 +2,9 @@ package io.clh.testapp;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
+import android.view.View;
 
 public class MainActivity extends Activity {
 
@@ -19,5 +21,15 @@ public class MainActivity extends Activity {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+ 
+    public void goToOtherActivity(View view) 
+    {
+        Intent intent = new Intent(getApplicationContext(), OtherActivity.class);
+        startActivity(intent);
+    }
+    
+    //Exit button click
+    
+    //on view destroy or exit
     
 }

@@ -25,13 +25,15 @@ app.configure(function() {
 
 
 app.get('/', function(req,res) {
-    res.send("Hello! from the root.");
+    res.send("Hello! You got from the root.");
     console.log('GET /');
 });
 
 app.post('/',function(req,res) {
 
     console.log('post');
+
+   res.send("Hello! You posted to the root.");
 
 });
 

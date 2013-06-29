@@ -20,7 +20,7 @@ mongo.connect(process.env.MONGOLAB_URI, function(err, db) {
 var app = express();
 
 app.configure(function() {
-    app.set('port', process.env.HTTPPORT || 3000);
+    app.set('port', process.env.PORT || 3000);
     /* other middleware goes here */
 });
 

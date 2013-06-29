@@ -2,7 +2,7 @@
 var express = require('express');
 
 //Setup Mongo
-var mongo = require('mongodb').MongoClient
+/*var mongo = require('mongodb').MongoClient
 var mgdb = null;
 
 mongo.connect(process.env.MONGOLAB_URI, function(err, db) {
@@ -13,6 +13,7 @@ mongo.connect(process.env.MONGOLAB_URI, function(err, db) {
     mgdb = db;
     console.log('MongoLab connected');
 })
+*/
 
 
 

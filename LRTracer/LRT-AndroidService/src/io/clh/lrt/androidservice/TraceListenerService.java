@@ -23,6 +23,7 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -89,7 +90,11 @@ public class TraceListenerService extends Service {
 	    mServiceLooper = thread.getLooper();
 	    mServiceHandler = new ServiceHandler(mServiceLooper);
 	    
-	    setNotification();
+	    // Register the LRT receiver
+	    IntentFilter filter = new IntentFilter(ACTION_LRT_TEST);
+	    registerReceiver(mLrtReceiver, filter);
+	    
+	    setNotification("LRT Tracing Service Running", true);
 	  }
 
 	  @Override
@@ -118,6 +123,8 @@ public class TraceListenerService extends Service {
 	  public void onDestroy() {
           Log.i(TAG, "onDestroy()");
 	    Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show(); 
+	    unregisterReceiver(mLrtReceiver);
+	    
 	  }
 	 
 
@@ -134,7 +141,9 @@ public class TraceListenerService extends Service {
 			    	if(intent != null) {
 			    		// Get the event that was broadcast
 				    	String action = intent.getAction();
-				    	if (DEBUG) Toast.makeText(context, "LRT broadcast action: "+action, Toast.LENGTH_SHORT).show();
+			    		Log.e(TAG, "GOT BROADCAST! Action = "+action);
+//				    	if (DEBUG) Toast.makeText(context, "LRT broadcast action: "+action, Toast.LENGTH_SHORT).show();
+				    	setNotification("LRT broadcast action: "+action, false);
 				        if(action == null) {
 				        	// Invalid action, exit
 				        	if (DEBUG)	Toast.makeText(context, "LRT - No action given", Toast.LENGTH_SHORT).show();
@@ -149,24 +158,30 @@ public class TraceListenerService extends Service {
 		    }
 		};
 		
-		private void setNotification() {
+		private void setNotification(String msg, boolean ongoing) {
 			NotificationManager notificationManager =
 				    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 				int icon = R.drawable.ic_launcher;
-				CharSequence notiText = "LRT Service message!";
+				CharSequence notiText = msg;
 				long meow = System.currentTimeMillis();
 
 				Notification notification = new Notification(icon, notiText, meow);
 
 				Context context = getApplicationContext();
 				CharSequence contentTitle = "LRT notification";
-				CharSequence contentText = "Some LRT thing has happened!!";
+				CharSequence contentText = msg;
 				Intent notificationIntent = new Intent(this, MainActivity.class);
 				PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
 				notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
 
 				int SERVER_DATA_RECEIVED = 1;
-				notificationManager.notify(SERVER_DATA_RECEIVED, notification);
+				if(ongoing) {
+					notification.flags |= Notification.FLAG_ONGOING_EVENT;
+					notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+				    startForeground(1337, notification);
+				} else {
+					notificationManager.notify(SERVER_DATA_RECEIVED, notification);
+				}
 		}
 	}

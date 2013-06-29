@@ -23,6 +23,8 @@ public class MainActivity extends Activity {
 		
 		Log.i(TAG, "MainActivity#Create");
 		startService(new Intent(MainActivity.this, TraceListenerService.class));
+		
+		sendBroadcast("Started the main LRT activity");
 	}
 
 	@Override
@@ -32,4 +34,12 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
+	private void sendBroadcast(String msg) {
+    	Log.d(TAG, "Send broadcast: "+msg);
+    	Intent connBroadcastIntent = new Intent(TraceListenerService.ACTION_LRT_TEST);
+    	connBroadcastIntent.putExtra("message", msg);
+    	connBroadcastIntent.setPackage("io.clh.lrt.androidservice");		// Limit who sees the broadcast
+    	sendBroadcast(connBroadcastIntent);
+    	Log.d(TAG, "Sent.");
+	}
 }

@@ -2,7 +2,9 @@
     "name" : "lrtserver",
 
     "dependencies": {
-       "ws"       : "0.4.19"
+       "ws"       : "0.4.19",
+       "express" : "latest",
+       "mongodb" : "latest"
     },
 
     "engines": {

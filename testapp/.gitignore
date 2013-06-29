@@ -18,30 +18,7 @@ local.properties
 # Eclipse project files
 .classpath
 .project
-.metadata
-
-
-#node stuff
-lib-cov
-*.seed
-*.log
-*.csv
-*.dat
-*.out
-*.pid
-*.gz
-
-pids
-logs
-results
-
-npm-debug.log
-node_modules
-
-#this is from mongolab?
-libpeerconnection.log
+.settings
 
 
 
-#vim
-*.swp

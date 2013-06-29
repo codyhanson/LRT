@@ -29,7 +29,25 @@ public class MainActivity extends Activity {
     }
     
     //Exit button click
+    public void clickToExit(View view){
+    	//shut down and exit the app.
+    }
+    /*    
+    public void onPause() {
+    	
+    }
     
-    //on view destroy or exit
+    public void onResume() {
+    	
+    }
+    
+    public void onStop() {
+    	
+    }
+    
+    public void onSaveInstanceState(){
+    
+    }
+    */
     
 }

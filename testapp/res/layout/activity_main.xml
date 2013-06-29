@@ -34,6 +34,7 @@
         android:layout_alignTop="@+id/button1"
         android:layout_marginLeft="63dp"
         android:layout_toRightOf="@+id/button1"
+        android:onClick="clickToExit"
         android:text="Leave the App" />
 
 </RelativeLayout>

@@ -42,9 +42,11 @@ app.post('/',function(req,res) {
 app.listen(app.get('port'));
 console.log('express listening on port:' + app.get('port'));
 
+/*
 process.on('SIGINT', function () {
   console.log('Got SIGINT. Cleanup stuff .');
 });
+*/
 
 /*
 var WebSocketServer = require('ws').Server

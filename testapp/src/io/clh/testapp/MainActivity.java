@@ -7,8 +7,8 @@ import android.view.Menu;
 import android.view.View;
 
 public class MainActivity extends Activity {
-
-    @Override
+	
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -24,6 +24,7 @@ public class MainActivity extends Activity {
  
     public void goToOtherActivity(View view) 
     {
+    	LRTracer.trace(this,"goToOtherActivity");
         Intent intent = new Intent(getApplicationContext(), OtherActivity.class);
         startActivity(intent);
     }

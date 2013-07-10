@@ -20,7 +20,8 @@ mongo.connect(process.env.MONGOLAB_URI, function(err, db) {
 var app = express();
 
 app.configure(function() {
-    app.set('port', process.env.PORT || 3000);
+    app.set('port', process.env.PORT || 3000)
+    app.use(express.bodyParser());
     /* other middleware goes here */
 });
 
@@ -32,8 +33,8 @@ app.get('/', function(req,res) {
 
 app.post('/',function(req,res) {
 
-    console.log('post');
-
+   console.log('post');
+   console.log(req.body);
    res.send("Hello! You posted to the root.");
 
 });

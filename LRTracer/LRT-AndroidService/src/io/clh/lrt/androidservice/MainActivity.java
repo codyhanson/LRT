@@ -40,8 +40,8 @@ public class MainActivity extends Activity {
 		Log.i(TAG, "MainActivity#Create");
 		startService(new Intent(MainActivity.this, TraceListenerService.class));
 
-		sendBroadcast("Started the main LRT activity");
-		sendBroadcast("Second broadcast");
+		sendBroadcast(TAG, 123, "Started the main LRT activity");
+		sendBroadcast(TAG, 123, "Second broadcast");
 
 		Button button = (Button) findViewById(R.id.btnRefresh);
 		
@@ -63,17 +63,19 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
-	private void sendBroadcast(String msg) {
+	private void sendBroadcast(String tag, int line, String msg) {
 		Log.d(TAG, "Send broadcast: " + msg);
 		Intent connBroadcastIntent = new Intent(
 				TraceListenerService.ACTION_LRT_TEST);
+		connBroadcastIntent.putExtra("tag", tag);
+		connBroadcastIntent.putExtra("line", line);
 		connBroadcastIntent.putExtra("message", msg);
 		connBroadcastIntent.setPackage("io.clh.lrt.androidservice"); // Limit
 																		// who
 																		// sees
 																		// the
 																		// broadcast
-		sendBroadcast(connBroadcastIntent);
+		sendBroadcast(TAG, 123, connBroadcastIntent);
 		Log.d(TAG, "Sent.");
 	}
 

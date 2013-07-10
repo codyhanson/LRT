@@ -23,8 +23,9 @@ public class MainActivity extends Activity {
 		
 		Log.i(TAG, "MainActivity#Create");
 		startService(new Intent(MainActivity.this, TraceListenerService.class));
-		
+
 		sendBroadcast("Started the main LRT activity");
+		sendBroadcast("Second broadcast");
 	}
 
 	@Override

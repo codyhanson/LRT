@@ -72,7 +72,7 @@ public class TraceListenerService extends Service {
 	          }
 	          // Stop the service using the startId, so that we don't stop
 	          // the service in the middle of handling another job
-	          stopSelf(msg.arg1);
+//	          stopSelf(msg.arg1);
 	      }
 	  }
 
@@ -135,9 +135,11 @@ public class TraceListenerService extends Service {
 			    	if(intent != null) {
 			    		// Get the event that was broadcast
 				    	String action = intent.getAction();
-			    		Log.e(TAG, "GOT BROADCAST! Action = "+action);
+				    	String message = intent.getStringExtra("message");
+			    		Log.e(TAG, "GOT BROADCAST! MSG = "+message);
+			        	if (DEBUG)	Toast.makeText(context, "BROADCAST RCVD! "+action, Toast.LENGTH_SHORT).show();
 //				    	if (DEBUG) Toast.makeText(context, "LRT broadcast action: "+action, Toast.LENGTH_SHORT).show();
-				    	setNotification("LRT broadcast action: "+action, false);
+				    	setNotification("LRT broadcast message: "+message, false);
 				        if(action == null) {
 				        	// Invalid action, exit
 				        	if (DEBUG)	Toast.makeText(context, "LRT - No action given", Toast.LENGTH_SHORT).show();

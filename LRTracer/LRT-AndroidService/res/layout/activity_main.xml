@@ -9,8 +9,18 @@
     tools:context=".MainActivity" >
 
     <TextView
+        android:id="@+id/dbg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/hello_world" />
+
+    <Button
+        android:id="@+id/btnRefresh"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="Refresh" />
 
 </RelativeLayout>

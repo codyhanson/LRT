@@ -185,16 +185,19 @@ public class TraceListenerService extends Service {
 				if (intent != null) {
 					// Get the event that was broadcast
 					String action = intent.getAction();
+					String tag = intent.getStringExtra("tag");
+					int line = intent.getIntExtra("line");
 					String message = intent.getStringExtra("message");
-					Log.e(TAG, "MSG = " + message);
+					Log.e(TAG, "(TAG,LINE,MSG) = " + tag+", "+line+", "+message);
 					if (DEBUG)
-						Toast.makeText(context, "BROADCAST RCVD! " + action,
+						Toast.makeText(context, tag+", "+line+", "+message,
 								Toast.LENGTH_SHORT).show();
-					mDataBuffer.add(message);
-					Log.i(TAG, "Added msg to buffer: " + message);
+					String jsonStr = "{ 'tag': '"+tag+"', 'line': "+line+", 'message': '"+message+"' }";
+					mDataBuffer.add(jsonStr);
+					Log.i(TAG, "Added msg to buffer: " + tag+", "+line+", "+message);
 					Log.v(TAG, "Buffer size: " + mDataBuffer.size());
 
-					setNotification(message, false);
+					setNotification(tag+", "+line+", "+message, false);
 					if (action == null) {
 						// Invalid action, exit
 						if (DEBUG)

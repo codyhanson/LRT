@@ -133,7 +133,7 @@ public class TraceListenerService extends Service {
 	private void infiLoop() {
 		Log.i(TAG, "Loop...");
 
-		getQueue();
+		dumpQueue();
 
 		Handler handler = new Handler();
 		handler.postDelayed(new Runnable() {
@@ -224,10 +224,10 @@ public class TraceListenerService extends Service {
 	public void dumpQueue() {
 		Log.v(TAG, "Dump queue | size = " + mDataBuffer.size());
 		
-//		while(mDataBuffer.size() > 0) {
-//			String item = mDataBuffer.remove();
-//			Log.v(TAG, " '--> "+item);
-//		}
+		while(mDataBuffer.size() > 0) {
+			String item = mDataBuffer.remove();
+			Log.v(TAG, " '--> "+item);
+		}
 		Log.v(TAG, "[====/dump====]");
 	}
 }

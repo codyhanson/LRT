@@ -75,14 +75,14 @@ public class MainActivity extends Activity {
 	}
 
 	public void dumpQueue() {
-		Log.w(TAG, "DUMP DAT QUEUE");
-		LinkedList<String> dataBuffer = TraceListenerService.getQueue();
-		String stringBuffer = "";
-		if (dataBuffer != null) {
-			for (String string : dataBuffer) {
-				stringBuffer += string + "\n";
-			}
-		}
-		dbgView.setText(stringBuffer);
+		Log.w(TAG, "DUMP DAT QUEUE, but not really");
+//		LinkedList<String> dataBuffer = TraceListenerService.getQueue();
+//		String stringBuffer = "";
+//		if (dataBuffer != null) {
+//			for (String string : dataBuffer) {
+//				stringBuffer += string + "\n";
+//			}
+//		}
+//		dbgView.setText(stringBuffer);
 	}
 }

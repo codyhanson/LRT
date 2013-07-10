@@ -101,12 +101,6 @@ public class TraceListenerService extends Service {
 	  public int onStartCommand(Intent intent, int flags, int startId) {
           Log.i(TAG, "onStartCommand()");
 	      Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
-
-	      // For each start request, send a message to start a job and deliver the
-	      // start ID so we know which request we're stopping when we finish the job
-	      Message msg = mServiceHandler.obtainMessage();
-	      msg.arg1 = startId;
-	      mServiceHandler.sendMessage(msg);
 	      
 	      // If we get killed, after returning from here, restart
 	      return START_STICKY;

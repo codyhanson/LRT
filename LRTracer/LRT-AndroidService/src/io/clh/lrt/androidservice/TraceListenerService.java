@@ -16,8 +16,14 @@
 
 package io.clh.lrt.androidservice;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -32,13 +38,25 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Toast;
+
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.DefaultedHttpParams;
+import org.apache.http.params.HttpParams;
 
 public class TraceListenerService extends Service {
 	private Looper mServiceLooper;
 	private ServiceHandler mServiceHandler;
 	private LinkedList<String> mDataBuffer = new LinkedList<String>();
+	private HttpClient restClient;
+	private HttpPost postMethod;
 
 	// Debug verbosity
 	private static final String TAG = "lrt_androidservice";
@@ -97,6 +115,14 @@ public class TraceListenerService extends Service {
 		mServiceLooper = thread.getLooper();
 		mServiceHandler = new ServiceHandler(mServiceLooper);
 
+		restClient = new DefaultHttpClient();
+		postMethod = new HttpPost("http://lrtserver.herokuapp.com/");
+
+		//network on main thread H@XXX
+		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+		StrictMode.setThreadPolicy(policy); 
+		
+		
 		// Register the LRT receiver
 		IntentFilter filter = new IntentFilter(ACTION_LRT_TEST);
 		registerReceiver(mLrtReceiver, filter);
@@ -215,19 +241,37 @@ public class TraceListenerService extends Service {
 		}
 	}
 
-//	public static LinkedList<String> getQueue() {
-////		Log.i(TAG, mDataBuffer.toString());
-//		Log.v(TAG, "Dump queue | size = " + mDataBuffer.size());
-//		return mDataBuffer;
-//	}
+	// public static LinkedList<String> getQueue() {
+	// // Log.i(TAG, mDataBuffer.toString());
+	// Log.v(TAG, "Dump queue | size = " + mDataBuffer.size());
+	// return mDataBuffer;
+	// }
 
 	public void dumpQueue() {
 		Log.v(TAG, "Dump queue | size = " + mDataBuffer.size());
-		
-		while(mDataBuffer.size() > 0) {
+
+		while (mDataBuffer.size() > 0) {
 			String item = mDataBuffer.remove();
-			Log.v(TAG, " '--> "+item);
+			Log.v(TAG, " '--> " + item);
+			hitAPI(item);
 		}
 		Log.v(TAG, "[====/dump====]");
+	}
+
+	public void hitAPI(String msg) {
+		try {
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+		      nameValuePairs.add(new BasicNameValuePair("message:",
+		          msg));
+		      postMethod.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+		 	
+			restClient.execute(postMethod);
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

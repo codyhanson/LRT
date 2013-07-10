@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
+
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -20,12 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-// RESTful calls
-//import org.apache.http.client.HttpClient;
-//import org.apache.http.client.methods.HttpGet;
-//import org.apache.http.impl.client.DefaultHttpClient;
-//import org.apache.http.protocol.BasicHttpContext;
-//import org.apache.http.protocol.HttpContext;
+
 
 public class MainActivity extends Activity {
 
@@ -36,8 +28,7 @@ public class MainActivity extends Activity {
 	private static boolean WARN = LOGLEVEL > 0;
 	private static boolean DEBUG = LOGLEVEL > 1;
 	private static boolean VERBOSE = LOGLEVEL > 2;
-	private HttpClient restClient;
-	private HttpPost postMethod;
+	
 
 	private TextView dbgView;
 
@@ -54,9 +45,7 @@ public class MainActivity extends Activity {
 
 		Button button = (Button) findViewById(R.id.btnRefresh);
 		
-		restClient = new DefaultHttpClient();
-		postMethod  = new HttpPost("http://lrtserver.herokuapp.com/");
-
+		
 		button.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -104,15 +93,5 @@ public class MainActivity extends Activity {
 //		dbgView.setText(stringBuffer);
 	}
 	
-	public void hitAPI() {
-		try {
-			restClient.execute(postMethod);
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	
 }

@@ -1,0 +1,43 @@
+
+\section{Crowd sourcing for large scale trace acquisition}
+One of the key issues with testing mobile applications is the sheer number
+of different scenarios that can affect the execution and performance
+of the App under test. It is impossible for developers to test their application
+on every hardware configuration, for all use models, for all environmental scenarios.
+Due to this fact, we believe that using the LRT system to 'crowd source' data for developers
+is the answer.
+
+\section{Motivating Participation}
+Any savvy user will understand that opting into using this system comes at a cost to themselves.
+Their phone will be expending extra energy and network capacity to support the tracing of 
+other peoples applications, which they build for fun and profit.
+In order to encourage more users to opt in, we will need to compensate them for their
+help, or make it fun for them to volunteer.
+
+\subsection{Gameification}
+A common way to motivate user engagement is with gameification. This is typically embodied
+by trophies, achievements, and leaderboards. App testers would earn trophies or achievements
+for successful testing, in the hopes that they are encouraged to continue testing, and at an
+increased rate. Additionally, having leaderboards encourages them to bring in friends and colleagues
+to compete with.
+
+A more interesting and, perhaps, novel implementation of gameification would be to reward developers
+for high code quality. We might flag our trace events with a severity (Info, Warning, Error), allowing
+us to rate an app by how few errors it has. An additional gameification metric to score developers on
+could be on "testing confidence," or the variety of device variations their app has been tested on.
+This would encourage the use of higher tiers of testing service.
+
+\subsection{A Market Based Approach}
+One of the best ways to reward participation is with money. As the relayer between app developers
+and app testers, we could charge the developers to have their apps tested. This might be priced
+as a metered, tiered approach - using more testers costs more, and getting results quicker costs more.
+On the tester side, we could reward users in a number of ways. One would be to simply put a
+value on each trace event - each trace event they produce is worth \$0.xx. We could improve the
+effectiveness of our "TaaS marketplace" by making the value of trace events dynamic. Producing a trace
+event on a high value app (where the developer is at a high tier or is paying for quicker results) would
+be worth more than a low value app. Additionally we could draw from our Gameification
+ideas and place a higher value on less frequently produced trace events. In all likelihood, these
+less frequent events would be bugs; therefore finding bugs and boundary cases is worth more to the 
+testers than following "hot paths". By encouraging testers to search for bugs and edge cases, we
+provide a higher value to the developers.
+

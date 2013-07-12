@@ -18,8 +18,7 @@
 \maketitle
 
 \begin{abstract}
-/* A concise and informative abstract will live here one day. */
-
+A concise and informative abstract will live here one day.
 \end{abstract}
 
 \section{Introduction}
@@ -50,7 +49,7 @@ next?”, or “which flows are common for users to take, and could thus be
 streamlined to create a better user experience?”. Problems of this nature are 
 discussed in \cite{WebAntiPattern}.
 
-\section{Related Work} 
+\section{Related Work}
 Existing techniques for tracing program execution are decades old, and usually 
 involve writing lines of output that the programmer purposefully incorporates 
 in the code into a file on disk, or exported to a logging server, as in syslog. 
@@ -164,7 +163,6 @@ next appropriate time to export them to the server. This allows us to support
 tracing for any and all apps on the device so long as our service is running and 
 that app has been injected with broadcasting code.
 
-
 \subsection{Enabling ease of use with automatic instrumentation}
 If time permits, we would like to build an automated instrumentation insertion 
 script, which would detect the appropriate spots in the App code to insert our 
@@ -176,8 +174,8 @@ a loop structure. The script would also populate the trace calls with relevant d
 for you, such as line number, class, method, and perhaps even basic state info (battery
 level, CPU usage, etc...).
 
-\include{crowdsource}
-\include{datamining}
+\input{crowdsource}
+\input{datamining}
 
 \bibliography{citations}{}
 \bibliographystyle{plain}

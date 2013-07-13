@@ -1,19 +1,30 @@
 
 var express = require('express');
+var mongoose = require('mongoose');
 
-//Setup Mongo
-/*var mongo = require('mongodb').MongoClient
-var mgdb = null;
+var mongoUrl = process.env.MONGOLAB_URI || 'mongodb://localhost/lrt';
 
-mongo.connect(process.env.MONGOLAB_URI, function(err, db) {
-    if(err) {
-        console.log('Error connecting to Mongo');
-        throw err;
+//object model for trace events
+var tracePointSchema = new mongoose.Schema( 
+{
+    lineNumber: Number,
+    timestamp: Date,
+    seq: Number,
+    methodSig: String,
+    traceId: String
+    //some other shit
+
+});
+var TracePoint = mongoose.model('TracePoint',tracePointSchema);
+
+//Setup Mongodb
+mongoose.connect(mongoUri, function(err,res) {
+    if (err) {
+        console.log ('ERROR connecting to: ' + mongoUri + '. ' + err);
+    } else {
+        console.log ('Succeeded: connected to: ' + mongoUri );
     }
-    mgdb = db;
-    console.log('MongoLab connected');
 })
-*/
 
 
 
@@ -42,27 +53,4 @@ app.post('/',function(req,res) {
 
 app.listen(app.get('port'));
 console.log('express listening on port:' + app.get('port'));
-
-/*
-process.on('SIGINT', function () {
-  console.log('Got SIGINT. Cleanup stuff .');
-});
-*/
-
-/*
-var WebSocketServer = require('ws').Server
-  , wss = new WebSocketServer({port: 8080});
-
-wss.on('connection', function(ws) {
-    ws.on('message', function(message) {
-        console.log('received: %s', message);
-    });
-    ws.send('something');
-});
-
-console.log('websocket server listening on 8080...');
-*/
-
-
-
 

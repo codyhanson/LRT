@@ -17,6 +17,20 @@ var tracePointSchema = new mongoose.Schema(
 });
 var TracePoint = mongoose.model('TracePoint',tracePointSchema);
 
+//object model for Trace
+var traceSchema = new mongoose.Schema(
+{
+    osVersion: String,
+    osType : String,
+    userId : String,
+    appName: String,
+    appVersion: String,
+    traceServiceVersion: String
+}
+);
+var Trace = mongoose.model('Trace',traceSchema);
+
+
 //Setup Mongodb
 mongoose.connect(mongoUri, function(err,res) {
     if (err) {
@@ -42,15 +56,57 @@ app.get('/', function(req,res) {
     console.log('GET /');
 });
 
-app.post('/',function(req,res) {
+/**
+ * Create a new trace for a particular user
+ */
+app.post('/users/:userId/traces', function(req,res) {
 
-   console.log('post');
-   console.log(req.body);
-   res.send("Hello! You posted to the root.");
+
+});
+
+/**
+ * Create new tracepoints for a particular 
+ * instance of a trace
+ * Takes an array of tracepoints as the POST body
+ * so we can effeciently post more than one point at a time.
+ */
+app.post('/traces/:traceId/tracepoints', function(req,res) {
+
+
+});
+
+
+/*
+ * get a list of traces for a user
+ *
+ */
+app.get('/users/:userId/traces', function (req,res) {
+
+});
+
+/*
+ * get a trace by id
+ *
+ */
+app.get('/traces/:traceId', function (req,res) {
+
+});
+
+/*
+ * get a list of trace points for a trace 
+ */
+app.get('/traces/:traceId/tracepoints', function (req,res) {
+    //TODO: we might want to support pagination for this one.
+
+});
+
+/*
+ * get a tracepoint by id
+ */
+app.get('/tracespoints/:tracePointId', function (req,res) {
 
 });
 
 
 app.listen(app.get('port'));
 console.log('express listening on port:' + app.get('port'));
-

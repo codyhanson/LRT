@@ -31,246 +31,37 @@ complexity of the system that is impossible to recreate perfectly in an
 emulation layer. Real users and their environments also may exercise apps in
 a way developers have not anticipated. 
 
-We propose a system which will allow developers of an internet connected 
-application to easily embed lightweight instrumentation 
-into their application code to enable real 
-time tracing of program execution to a cloud service. Events are collected by 
-the service which can perform analytics on your program execution as it is out 
-in the wild.
+We propose a system which will allow developers of applications on internet connected 
+devices to easily embed lightweight instrumentation 
+into their application code to enable high resolution 
+tracing of program execution to a cloud service. Events are collected by 
+the service which can perform analytics on program execution as it is 
+exercised out in the wild.
 
 Successful completion of this work will serve to accomplish a few key 
 improvements for testing mobile applications. This instrumentation will provide 
 the developer with a trace of the program running on actual hardware, not just 
-an emulator, as well as real life user and environment interaction. With this 
+an emulator, as the opportunity to collect the trace while the application is 
+subjected to real life users and environment interaction. With this 
 body of program flow data collected on the server, we can mine it for useful 
-information to answer questions such as ``which parts of the user interface were 
-confusing to the user'', and ``Did they spend too much time wondering what to do 
-next'', or ``which flows are common for users to take, and could thus be 
-streamlined to create a better user experience.'' Problems of this nature are 
+information to answer questions such as ``\emph{which parts of the user interface were 
+confusing to the user?}'', and ``\emph{Did they spend too much time wondering what to do 
+next?}'', or ``\emph{which flows are common for users to take, and could thus be 
+streamlined to create a better user experience?}'' Problems of this nature are 
 discussed in \cite{WebAntiPattern}.
 
 \section{Background}
 
+\input{challenges}
 
-\section{Challenges}
-Due to the large scope of this project, there are a number of challenges we must overcome.
-In this section, we overview the main challenges. Section \ref{section:proposeddesign} discusses
-our solution to these challenges.
+\input{relatedwork}
 
-\subsection{Instrumentation}
-We must find a way to insert our instrumentation into mobile apps that will
-allow for our remote tracing to occur. Automated insertion would be preferable,
-but to expedite prototyping, we have opted for manual insertion initially.
-While there has been some of research about efficiently and conveniently inserting
-instrumentation into mobile apps, much of it targets a lower-level implementation than
-we hope to achieve, such as coding at the kernel level to trace taints \cite{TaintDroid}.
-
-\subsection{Reporting}
-We must implement our data reports to the backend server in such a way that it
-has a minimal impact on mobile device performance and battery drain. Study done
-in \cite{PeriodicTransfers} indicates we should accumulate trace data for some
-period of time, then send it in bursts. We will need to play around with various
-periods to find a balance between keeping the accumulated data to a manageable
-size while being cognizant of the cellular radio's requirements.
-
-\subsection{Analytics}
-Once we have the trace data, we need to do something with it to inform developers
-what action they can take to improve the user's experience. To break this task
-into a realistic size, we will initially do some basic data roll-up, grouping
-traces by type and comparing the average time between traces. A stretch goal
-would be to use a real-time analytics tool or machine learning system 
-to make it easier for the developer to find actionable tasks.
-
-\subsection{Application Adaptation}
-The final piece that would make this tool truly unique would be to take the output
-of our analytics \ref{Analytics} to drive the application to change the UI to
-another layout that would provide a better user experience. The major difficulty will
-be finding a reasonable way to change the UI that is not over complicated, but will
-have a positive impact on the UI. Additionally, telling the application what to change
-and how will be challenging. Something we can do to simplify this is to constrain what
-we are willing to change to list-based views, as lists are common and can be displayed
-in a number of ways, such as scrolling listviews, grids, or paged lists.
-
-\subsection{Participation}
-Our final challenge will be encouraging users to test these LRT-enabled apps. Our
-proposal relies on crowdsourcing to provide the data we need to improve user
-experience by testing with real people. Since we want regular people, not employees
-of the app, to do the testing, we will need to provide incentive. Some possibilities
-for incentivizing the use of our tool are discussed in \ref{Motivating Participation}:
-market base approach (pay them), and gameification.
-
-\section{Related Work}
-Existing techniques for tracing program execution are decades old, and usually 
-involve writing lines of output that the programmer purposefully incorporates 
-in the code into a file on disk, or exported to a logging server, as in syslog. 
-Disk output can slow down a program, and the amount of log information that 
-builds up could be too large for the mobile device to store. The work done in 
-\cite{NSLogger} has the remote debugging capability for the iOS platform, although 
-it does not have the analytics that we will propose, and it requires user action 
-to implement the tracing. Android has remote debugging built into the developer 
-SDK \cite{AndroidRemoteDebugTool}, but this requires your app to be tethered to a development PC.
-
-Several businesses have been formed to address the need in this space, including
-Flurry \cite{Flurry} which provides app developers with high level metrics on
-user behavior and app performance, and Heatmaps \cite{Heatmaps}, an iOS specific
-service which gives developers deep insight to how users interact with a touch
-screen, and how they transition through the screens of an app. 
-Crashlytics \cite{Crashlytics} is a popular service that exports detailed
-crash analysis data from user devices to the cloud. There is a 'live' component,
-to the service, but it is focused on presenting crash statistics as they happen,
-not program step-by-step trace data.
-
-There has also been pertinent work done in more academic circles. If we can 
-generalize the work from other fields to apply to LRT, we can save ourselves 
-time and boost the quality of our research. In \cite{ProfileDroid}, a 
-multi-layer analysis tool for Android apps is presented, which employs a 
-technique to track user input via the Android tools 'getevent' and 'logcat'. 
-This work also collects system call invocation via the 'strace' tool. 
-
-We can also draw ideas from the taint tracing techniques discussed in 
-\cite{TaintDroid} as a way to implement our trace hooks while minimizing 
-the overhead of our tool. While we could have leveraged their method of 
-tracing by developing near the kernel, we opted for the convenience and 
-speed of development using built-in Android tools like Broadcasts to prove
-out the idea more quickly. The techniques discussed in \cite{PeriodicTransfers}
-will be a powerful resource for implementing our event reporting service 
-with energy and network resource consumption.
-
-\section{Proposed design}
-\label{section:proposeddesign}
-One of the key goals of any instrumentation inserted into an application is 
-that it should not adversely affect the performance or behavior of the 
-application execution. With this fact in mind, we realize that it will be 
-impossible to introduce merely negligable overhead while still gathering
-meaningful amounts of data. Still, we will seek to make data collection
-and exportation as minimally impactful on phone energy, bandwidth and processing
-constraints as possible.
-
-\subsection{Server design}
-One of the key pieces of our system is the LRT Server, which serves
-to collect trace data from mobile phones via a network connection.
-One server should be able to handle many phone clients exporting data at once.
-The server will be responsible for adding data that it recieves into
-some datastore that it has access to. We will initially do minimal realtime
-processing of the data, but could expand this in the future to improve the
-analytical power of the service. The first priority is for the server to quickly
-and efficiently persist the data that it recieves.
-
-In light of these requirements, we think the Node.js \cite{node}
-project to be a good fit for our server platform.
-Node.js is an asynchronous, event driven server 
-which interprets JavaScript with the V8 JavaScript engine \cite{V8-javascript} that
-powers the Google Chrome browser. Node.js is especially good
-at maintaining many concurrent connections in a single threaded implementation.
-Because it doesn't block on IO operations, we think it will be an efficient broker
-between the client mobile phones and the datastore. but will use a different server
-system to perform analytics
-because any heavy processing by a request can tie up Node's event loop.
-Due to Node's rich community and JavaScript platform,
-we will be able to prototype the server software with minimal development friction.
-
-\subsection{Efficient network transport}
-In order to minimize the overhead of exporting trace 
-events to the server, there are two possible schools of networking thought.
-One option is the relatively new Websocket protocol 
-\cite{WebsocketRFC}, which keeps open a bidirectional communications channel 
-over the HTTP port. By keeping open a long lived 
-websocket connection and sending size efficient 
-messages, we do not suffer the TCP and HTTP connection establishment overhead 
-for each trace event. 
-
-Event messages can also be compressed and buffered for when a 
-network connection is again available. We will use a websocket enabled HTTP 
-server, and establish feasibility of running the server on a hosted cloud 
-provider, or on the LAN if performance dictates. If the cloud access penalty is 
-acceptable, we believe this could be a superior use model that would make people
-more likely to use the technology. 
-
-However our study of \cite{PeriodicTransfers} suggests that
-our instrumentation should follow a more sparse communications pattern, making
-a RESTful API\cite{REST} design favorable over websockets. If communications
-only happen infrequently in order to save resources, the new connection overhead for
-each HTTP request will affect resources less than the battery
-drain a continuous HTTP connection of Websockets would incur.
-
-\subsection{Datastore considerations}
-Thinking ahead to realistic user volumes for a service of this nature, it is
-important to think about the model for storing data that best fits the 
-needs of our design. We will need to be able to store millions of trace points
-that span data collected from many different users. User's privacy must also be
-considered, to ensure that sensitive and proprietary information is not shared
-inadvertently with other users.
-
-\subsection{Instrumentation for the Android platform}
-In order to capture trace events generated by an application, we will build
-a service app which runs continually in the background of the mobile phone.
-Android has a class called \texttt{BroadcastReciever} which can receive messages
-from multiple processes at the same time. An instrumented process merely needs
-to know the right \texttt{Intent} to broadcast with, and arbitrary data can be
-sent to the service. Code inserted into the App under test will communicate with the
-background service via static methods in a Java class we will create.
-The service will recieve events from applications under test, buffering them until the
-next appropriate time to export them to the server. This allows us to support 
-tracing for any and all apps on the device so long as our service is running and 
-that app has been injected with broadcasting code.
-
-\subsection{Enabling ease of use with automatic instrumentation}
-If time permits, we would like to build an automated instrumentation insertion 
-script, which would detect the appropriate spots in the App code to insert our 
-code. This would make it easy for any developer to apply the LRT capability to
-an existing app, just by running the script and making a debug build of their 
-app. Possible insertion points of interest could be program structures such as the first
-line of each method, or within \texttt{if/else} blocks, or within the body of
-a loop structure. The script would also populate the trace calls with relevant data
-for you, such as line number, class, method, and perhaps even basic state info (battery
-level, CPU usage, etc...).
+\input{proposeddesign}
 
 \input{crowdsource}
 \input{datamining}
 
-\section{Empirical Evaluation}
-This section describes what we did to evaluate our proposal, and how well it performed
-based on metrics we predefined.
-
-\subsection{Plan}
-There a few main things that will justify our research as an improvement on existing techniques.
-
-First, it must objectively improve user experience, and do so better than other techniques.
-To measure this, we will compare the speed with which a user navigates through a new app
-before and after our UI improvements. To control this, we will have users use the two variants
-of the app in both orders: improved version after original, and improved version before original.
-Additionally, we will investigate options for simulating user input.
-
-Second, it would be good to measure the time it takes developers to achieve equivalent
-improvements in user experience with alternative techniques. This will be difficult to
-measure objectively. Something we could do is use a public, popular app and start with
-an old version, then compare the improvements our tool suggests to those the app team
-implemented subsequent to that version. If our tool leads to a similar or better improvement
-than the app team implemented, and does it in a reasonable time, this would indicate the
-value of the LRT system.
-
-Third, we must show that the LRT tool does not unreasonably impact the device's performance.
-Since LRT aims to test UX and trace remotely, we cannot have the same expectations as testing
-tools that store the results on the device. Additionally, we can run experiments to see how
-much data, and how detailed of information we trace, before performance degradation exceeds
-some limit. We propose that this threshold should be 20\% worse battery consumption, and 10\%
-CPU and memory overhead.
-
-\subsection{Setup}
-For ease of implementation, we developed LRT for Android. We will use a Samsung Galaxy S3
-over Wi-Fi of two signal strength levels (60dBm and 100dBm), a 3G connection, and a 4G connection
-(Verizon). We will select an open source app that relies on listviews to run our tests on. We will
-do some initial experimentation on our own to judge what level of detail our instrumentation can
-trace without exceeding our performance impact thresholds. Based on this, we will insert some
-amount of instrumentation into the app and have 5 randomly selected UCCS students use the app
-in a consistent cellular service environment. Based on the results of LRT, we will modify the
-app to improve user experience, after which we'll have another 5 randomly selected UCCS students
-use the modified app. To judge the success of LRT, we will compare the performance metrics of the
-two groups of students, as well as a reaction survey they will take after participating in the
-study.
-
-\subsection{Experiment Outcomes}
-...
+\input{evaluation}
 
 \section{Conclusion}
 ...

@@ -43,10 +43,10 @@ improvements for testing mobile applications. This instrumentation will provide
 the developer with a trace of the program running on actual hardware, not just 
 an emulator, as well as real life user and environment interaction. With this 
 body of program flow data collected on the server, we can mine it for useful 
-information to answer questions such as \`\`which parts of the user interface were 
-confusing to the user\", and \`\`Did they spend too much time wondering what to do 
-next\", or \`\`which flows are common for users to take, and could thus be 
-streamlined to create a better user experience.\" Problems of this nature are 
+information to answer questions such as ``which parts of the user interface were 
+confusing to the user'', and ``Did they spend too much time wondering what to do 
+next'', or ``which flows are common for users to take, and could thus be 
+streamlined to create a better user experience.'' Problems of this nature are 
 discussed in \cite{WebAntiPattern}.
 
 \section{Background}
@@ -54,7 +54,7 @@ discussed in \cite{WebAntiPattern}.
 
 \section{Challenges}
 Due to the large scope of this project, there are a number of challenges we must overcome.
-In this section, we overview the main challenges. Section \ref{Proposed design} discusses
+In this section, we overview the main challenges. Section \ref{section:proposeddesign} discusses
 our solution to these challenges.
 
 \subsection{Instrumentation}
@@ -137,6 +137,7 @@ will be a powerful resource for implementing our event reporting service
 with energy and network resource consumption.
 
 \section{Proposed design}
+\label{section:proposeddesign}
 One of the key goals of any instrumentation inserted into an application is 
 that it should not adversely affect the performance or behavior of the 
 application execution. With this fact in mind, we realize that it will be 

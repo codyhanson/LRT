@@ -1,0 +1,42 @@
+\section{Related Work}
+\label{section:relatedwork}
+Existing techniques for tracing program execution are decades old, and usually 
+involve writing lines of output that the programmer purposefully incorporates 
+in the code into a file on disk, or exported to a logging server, as in syslog. 
+Disk output can slow down a program, and the amount of log information that 
+builds up could be too large for the mobile device to store. The work done in 
+\cite{NSLogger} has the remote debugging capability for the iOS platform, although 
+it does not have the analytics that we will propose, and it requires user action 
+to implement the tracing. Android has remote debugging built into the developer 
+SDK \cite{AndroidRemoteDebugTool}, but this requires your app to be tethered to a development PC.
+
+Several businesses have been formed to address the need in this space, including
+Flurry \cite{Flurry} which provides app developers with high level metrics on
+user behavior and app performance, and Heatmaps \cite{Heatmaps}, an iOS specific
+service which gives developers deep insight to how users interact with a touch
+screen, and how they transition through the screens of an app. 
+Crashlytics \cite{Crashlytics} is a popular service that exports detailed
+crash analysis data from user devices to the cloud. There is a 'live' component,
+to the service, but it is focused on presenting crash statistics as they happen,
+not program step-by-step trace data.
+
+There has also been pertinent work done in more academic circles. If we can 
+generalize the work from other fields to apply to LRT, we can save ourselves 
+time and boost the quality of our research. In \cite{ProfileDroid}, a 
+multi-layer analysis tool for Android apps is presented, which employs a 
+technique to track user input via the Android tools \emph{getevent} and \emph{logcat}. 
+This work also collects system call invocation via the \emph{strace} tool. 
+
+We can also draw ideas from the taint tracing techniques discussed in 
+\cite{TaintDroid} as a way to implement our trace hooks while minimizing 
+the overhead of our tool. While we could have leveraged their method of 
+tracing by developing near the kernel, we opted for the convenience and 
+speed of development using built-in Android tools like Broadcasts to prove
+out the idea more quickly. The techniques discussed in \cite{PeriodicTransfers}
+will be a powerful resource for implementing our event reporting service 
+with minimized energy and network resource consumption.
+
+TODO: cite COCA: Computation Offload to Clouds Using AOP
+
+TODO: cite JaBUTi/ME
+

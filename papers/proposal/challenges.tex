@@ -1,0 +1,63 @@
+\section{Challenges}
+\label{section:challenges}
+Due to the large scope of this project, there are a number of challenges we must overcome.
+In this section, we overview the main challenges. Section \ref{section:proposeddesign} discusses
+our solutions to these challenges.
+
+\subsection{Instrumentation}
+We must find a way to insert our instrumentation into mobile apps that will
+allow for our remote tracing to occur. Automated insertion would be preferable,
+but to expedite prototyping, we have opted for manual insertion initially.
+While there has been some of research about efficiently and conveniently inserting
+instrumentation into mobile apps, much of it targets a lower-level implementation than
+we hope to achieve, such as coding at the kernel level to trace taints \cite{TaintDroid}.
+
+\subsection{Reporting Trace Data to the Server}
+We must implement our data reports to the backend server in such a way that it
+has a minimal impact on mobile device performance and battery drain. The study done
+in \cite{PeriodicTransfers} indicates we should accumulate trace data for some
+period of time, then send it in bursts, to make best use of the energy properties
+of the cellular radio. We will need to experiment with various
+periods between transmissions to find a balance between keeping the accumulated data to a manageable
+size while being cognizant of the cellular radio's requirements in order to minimize
+energy usage.
+
+\subsection{Trace Data Storage in the Cloud}
+Scaling the storage of data in cloud services has never been easier,
+but it is still a problem which warrants some careful thought and design.
+Our service would have to handle potentially hundreds of thousands of trace's,
+comprised of millions of trace events. We also need a datastore that will allow
+us to efficiently and flexibly query the data to find properties of the executions that will
+provide insight to developers.
+
+\subsection{Analytics}
+Once we have the trace data, we need to do something with it to inform developers
+what action they can take to improve the user's experience. To break this task
+into a realistic size, we will initially do some basic data roll-up, grouping
+traces by type and comparing the average time between traces. A stretch goal
+would be to use a real-time analytics tool or machine learning system 
+to make it easier for the developer to find actionable tasks. With 
+an opt in system to protect privacy, we could compare trace data between users,
+to expose statistical data such as average time to load a view, or average 
+application startup time. Knowing that baseline, a developer could know 
+if maybe they need to improve their application in these areas.
+
+\subsection{Application Adaptation}
+The final piece that would make this tool truly unique would be to take the output
+of our analytics \ref{Analytics} to drive the application to change the UI to
+another layout that would provide a better user experience. The major difficulty will
+be finding a reasonable way to change the UI that is not over complicated, but will
+have a positive impact on the UI. Additionally, telling the application what to change
+and how will be challenging. Something we can do to simplify this is to constrain what
+we are willing to change to list-based views, as lists are common and can be displayed
+in a number of ways, such as scrolling listviews, grids, or paged lists.
+
+\subsection{Participation}
+Our final challenge will be encouraging users to test these LRT-enabled apps. Our
+proposal relies on crowdsourcing to provide the data we need to improve user
+experience by testing with real people. Since we want regular people, not employees
+of the app, to do the testing, we will need to provide incentive. Some possibilities
+for incentivizing the use of our tool are discussed in \ref{section:motivatingparticipation}:
+market base approach (pay them), and gameification.
+
+

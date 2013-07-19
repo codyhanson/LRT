@@ -1,5 +1,5 @@
-
 \section{Crowd sourcing for large scale trace acquisition}
+\label{section:crowdsourcing}
 One of the key issues with testing mobile applications is the sheer number
 of different scenarios that can affect the execution and performance
 of the App under test. It is impossible for developers to test their application
@@ -8,6 +8,7 @@ Due to this fact, we believe that using the LRT system to 'crowd source' data fo
 is the answer.
 
 \section{Motivating Participation}
+\label{section:motivatingparticipation}
 Any savvy user will understand that opting into using this system comes at a cost to themselves.
 Their phone will be expending extra energy and network capacity to support the tracing of 
 other peoples applications, which they build for fun and profit.
@@ -24,8 +25,8 @@ to compete with.
 A more interesting and, perhaps, novel implementation of gameification would be to reward developers
 for high code quality. We might flag our trace events with a severity (Info, Warning, Error), allowing
 us to rate an app by how few errors it has. An additional gameification metric to score developers on
-could be on "testing confidence," or the variety of device variations their app has been tested on.
-This would encourage the use of higher tiers of testing service.
+could be on ``testing confidence'', or the variety of device variations their app has been tested on.
+This would encourage the use of higher-subscription tiers of the testing service.
 
 \subsection{A Market Based Approach}
 One of the best ways to reward participation is with money. As the relayer between app developers
@@ -37,7 +38,7 @@ effectiveness of our "TaaS marketplace" by making the value of trace events dyna
 event on a high value app (where the developer is at a high tier or is paying for quicker results) would
 be worth more than a low value app. Additionally we could draw from our Gameification
 ideas and place a higher value on less frequently produced trace events. In all likelihood, these
-less frequent events would be bugs; therefore finding bugs and boundary cases is worth more to the 
+less frequent events would be bugs; Therefore, finding bugs and boundary cases is worth more to the 
 testers than following "hot paths". By encouraging testers to search for bugs and edge cases, we
-provide a higher value to the developers.
+provide a higher value to the developers, and a larger bounty for the testers.
 

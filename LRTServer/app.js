@@ -1,8 +1,9 @@
 
 var express = require('express');
 var mongoose = require('mongoose');
+var async = require('async');
 
-var mongoUrl = process.env.MONGOLAB_URI || 'mongodb://localhost/lrt';
+var mongoUri = process.env.MONGOLAB_URI || 'mongodb://localhost/lrt';
 
 //object model for trace events
 var tracePointSchema = new mongoose.Schema( 
@@ -63,11 +64,12 @@ app.post('/users/:userId/traces', function(req,res) {
 
     newTrace.save(function(err) {
         if (err) {
+            console.log(err);
             sendResponse(res,503,{error: 'fail'});
         } else {
-            sendResponse(res,201,newTrace.toObject();
+            sendResponse(res,201,newTrace.toObject());
         }
-    }
+    });
 });
 
 /**
@@ -77,8 +79,22 @@ app.post('/users/:userId/traces', function(req,res) {
  * so we can effeciently post more than one point at a time.
  */
 app.post('/traces/:traceId/tracepoints', function(req,res) {
-
-
+    var points = req.body;
+    async.each(points,
+        function(point, taskCallback) {
+            var newPoint = new TracePoint(point);
+            newPoint.traceId = req.params.traceId;
+            newPoint.save(function(err) { if (err) return err;});
+        },
+        function(err) {
+            if (err) {
+                console.log(err);
+                sendResponse(res,503,err);
+            } else {
+                sendResponse(res,200,{msg:"Tracepoints created. TODO put hrefs in here"});
+            }
+        }
+    );
 });
 
 
@@ -113,7 +129,7 @@ app.get('/users/:userId/traces', function (req,res) {
  *
  */
 app.get('/traces/:traceId', function (req,res) {
-    Trace.findOne({_id: :traceId}, function (err, trace) {
+    Trace.findOne({_id: req.params.traceId}, function (err, trace) {
         if (err) {
             console.log(err);
             sendResponse(res,503,{error: 'server error'});
@@ -154,7 +170,7 @@ app.get('/traces/:traceId/tracepoints', function (req,res) {
  * get a tracepoint by id
  */
 app.get('/tracespoints/:tracePointId', function (req,res) {
-    TracePoint.findOne({_id: :tracePointId}, function (err, tp) {
+    TracePoint.findOne({_id: req.params.tracePointId}, function (err, tp) {
         if (err) {
             console.log(err);
             sendResponse(res,503,{error: 'server error'});
@@ -167,14 +183,14 @@ app.get('/tracespoints/:tracePointId', function (req,res) {
 });
 
 //delete a trace and all of the tracepoints that it owns.
-app.delete('/traces/:traceId', function (req,res) {
+//app.delete('/traces/:traceId', function (req,res) {
 
-}
+//});
 
 
 function sendResponse(res,statusCode,responseBodyObject) {
     res.writeHead(statusCode,  {'Content-Type': 'application/json'});
-    res.write(JSON.stringify(responseBody));
+    res.write(JSON.stringify(responseBodyObject));
     res.end();
     console.log("Response: " + statusCode + ' body:' + responseBody);
 }

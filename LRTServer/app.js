@@ -46,8 +46,14 @@ var app = express();
 app.configure(function() {
     app.set('port', process.env.PORT || 3000)
     app.use(express.bodyParser());
+    app.use(reqlogger);
     /* other middleware goes here */
 });
+
+function reqlogger(req, res, next) {
+    console.log("Request: " + req.method + ' ' + req.url + ' body:' + JSON.stringify(req.body));
+    next(); // Passing the request to the next handler in the stack.
+}
 
 
 app.get('/', function(req,res) {
@@ -79,13 +85,21 @@ app.post('/users/:userId/traces', function(req,res) {
  * so we can effeciently post more than one point at a time.
  */
 app.post('/traces/:traceId/tracepoints', function(req,res) {
-    var points = req.body;
+    var points = req.body.items;
     async.each(points,
         function(point, taskCallback) {
-            console.log('ugh:' + point);
             var newPoint = new TracePoint(point);
+            //set the traceId field from the URL.
+            //this could be set in the tracepoint body itself too.
+
             newPoint.traceId = req.params.traceId;
-            newPoint.save(function(err) { if (err) return err;});
+            newPoint.save(function(err) {
+                if (err) {
+                    taskCallback(err);
+                } else {
+                    taskCallback();
+                }
+            });
         },
         function(err) {
             if (err) {
@@ -153,7 +167,7 @@ app.get('/traces/:traceId/tracepoints', function (req,res) {
 
     //the base query
     //all elements left in qs will tell mongo to match the document field exactly.
-    var query = Trace.find(qs);
+    var query = TracePoint.find(qs);
 
     //execute the built up query
     //use the lean() option to return json objects, not heavyweight mongoose objects

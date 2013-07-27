@@ -15,12 +15,12 @@
         android:text="@string/hello_world" />
 
     <Button
-        android:id="@+id/btnRefresh"
+        android:id="@+id/btnClose"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:text="Refresh" />
+        android:text="Close" />
 
 </RelativeLayout>

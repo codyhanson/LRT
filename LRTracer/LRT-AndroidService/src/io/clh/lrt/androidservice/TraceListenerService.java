@@ -168,17 +168,17 @@ public class TraceListenerService extends Service {
 	}
 
 	private void infiLoop() {
-		Log.i(TAG, "Loop...");
-
-		dumpQueue();
-
-		Handler handler = new Handler();
-		handler.postDelayed(new Runnable() {
-			public void run() {
-				// runs a method every 30s
-				infiLoop();
-			}
-		}, 10000);
+//		Log.i(TAG, "Loop...");
+//
+//		dumpQueue();
+//
+//		Handler handler = new Handler();
+//		handler.postDelayed(new Runnable() {
+//			public void run() {
+//				// runs a method every 30s
+//				infiLoop();
+//			}
+//		}, 10000);
 	}
 
 	/**
@@ -204,12 +204,12 @@ public class TraceListenerService extends Service {
 					} else if(action.equals(ACTION_LRT_STOP)) {
 						Log.v(TAG, "STOP");
 						
-						traceEventStop(context, intent);
+						traceEventStop(intent);
 						
 					} else if(action.equals(ACTION_LRT_TRACE)) {
 						Log.v(TAG, "TRACE");
 						
-						traceEvent(context, intent);
+						traceEvent(intent);
 						
 					} else {
 						Log.w(TAG, "Unknown action: "+action);
@@ -236,10 +236,16 @@ public class TraceListenerService extends Service {
 			jsonData.put("traceServiceVersion", TRACE_SERVICE_VERSION);
 			String userId = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
 			
+			Log.d(TAG, "start trace: "+jsonData.toString());
+			
 			HttpResponse response = postAPI("users/"+userId+"/traces", "trace", jsonData.toString());
+			Log.d(TAG, "start trace got response: "+response.toString());
+			
 			String traceId = "abc123";
 			
 			appLut.put(appName, traceId);
+			
+			traceEvent(intent);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -248,23 +254,24 @@ public class TraceListenerService extends Service {
 	
 	private void traceEventStop(Intent intent) {
 		JSONObject jsonData = new JSONObject();
-		try {
-			String appName = intent.getStringExtra("appName");
-			jsonData.put("line", 99);
-			HttpResponse response = postAPI("traces/"+appLut.get(appName)+"/tracepoints", "trace", jsonData.toString());
-			
-			appLut.remove(appName);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		String appName = intent.getStringExtra("appName");
+		traceEvent(intent);
+		Log.d(TAG, "trace done: "+intent.toString());
+		appLut.remove(appName);
 	}
 	
 	private void traceEvent(Intent intent) {
 		JSONObject jsonData = new JSONObject();
 		try {
 			String appName = intent.getStringExtra("appName");
-			jsonData.put("line", 99);
+			jsonData.put("methodSig", intent.getStringExtra("methodSig") );
+			jsonData.put("timestamp", intent.getStringExtra("timestamp") );
+			jsonData.put("fileName", intent.getStringExtra("fileName") );
+			jsonData.put("lineNumber", intent.getIntExtra("lineNumber", -1));
+			jsonData.put("lineseq", intent.getIntExtra("seq", -1));
+			
+			Log.d(TAG, "trace event: "+jsonData.toString());
+			
 			HttpResponse response = postAPI("traces/"+appLut.get(appName)+"/tracepoints", "trace", jsonData.toString());
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -306,16 +313,16 @@ public class TraceListenerService extends Service {
 	// return mDataBuffer;
 	// }
 
-	public void dumpQueue() {
-		Log.v(TAG, "Dump queue | size = " + mDataBuffer.size());
-
-		while (mDataBuffer.size() > 0) {
-			String item = mDataBuffer.remove();
-			Log.v(TAG, " '--> " + item);
-			hitAPI("debug", item);
-		}
-		Log.v(TAG, "[====/dump====]");
-	}
+//	public void dumpQueue() {
+//		Log.v(TAG, "Dump queue | size = " + mDataBuffer.size());
+//
+//		while (mDataBuffer.size() > 0) {
+//			String item = mDataBuffer.remove();
+//			Log.v(TAG, " '--> " + item);
+//			hitAPI("debug", item);
+//		}
+//		Log.v(TAG, "[====/dump====]");
+//	}
 
 	public HttpResponse postAPI(String path, String key, String jsonData) {
 		try {

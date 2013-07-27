@@ -43,13 +43,14 @@ public class MainActivity extends Activity {
 		sendBroadcast(TAG, 123, "Started the main LRT activity");
 		sendBroadcast(TAG, 123, "Second broadcast");
 
-		Button button = (Button) findViewById(R.id.btnRefresh);
+		Button button = (Button) findViewById(R.id.btnClose);
 		
 		
 		button.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				dumpQueue();
+				stopService(new Intent(MainActivity.this, TraceListenerService.class));
+				finish();
 			}
 		});
 

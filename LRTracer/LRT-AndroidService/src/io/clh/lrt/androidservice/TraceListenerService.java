@@ -49,10 +49,13 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.DefaultedHttpParams;
 import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -196,6 +199,7 @@ public class TraceListenerService extends Service {
 				if (intent != null) {
 					// Get the event that was broadcast
 					String action = intent.getAction();
+					Log.e(TAG, "ACTION: "+action);
 					if(action.equals(ACTION_LRT_START)) {
 						Log.v(TAG, "START");
 						
@@ -204,12 +208,12 @@ public class TraceListenerService extends Service {
 					} else if(action.equals(ACTION_LRT_STOP)) {
 						Log.v(TAG, "STOP");
 						
-						traceEventStop(intent);
+						traceEventStop(context, intent);
 						
 					} else if(action.equals(ACTION_LRT_TRACE)) {
 						Log.v(TAG, "TRACE");
 						
-						traceEvent(intent);
+						traceEvent(context, intent);
 						
 					} else {
 						Log.w(TAG, "Unknown action: "+action);
@@ -245,25 +249,31 @@ public class TraceListenerService extends Service {
 			
 			appLut.put(appName, traceId);
 			
-			traceEvent(intent);
+			traceEvent(context, intent);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	private void traceEventStop(Intent intent) {
+	private void traceEventStop(Context context, Intent intent) {
 		JSONObject jsonData = new JSONObject();
 		String appName = intent.getStringExtra("appName");
-		traceEvent(intent);
+		traceEvent(context, intent);
 		Log.d(TAG, "trace done: "+intent.toString());
 		appLut.remove(appName);
 	}
 	
-	private void traceEvent(Intent intent) {
+	private void traceEvent(Context context, Intent intent) {		
 		JSONObject jsonData = new JSONObject();
 		try {
 			String appName = intent.getStringExtra("appName");
+			
+			if( appLut.get(appName) == null ) {
+				intent.putExtra("appVersion", "UNKNOWN");
+				traceEventStart(context, intent);
+			}
+			
 			jsonData.put("methodSig", intent.getStringExtra("methodSig") );
 			jsonData.put("timestamp", intent.getStringExtra("timestamp") );
 			jsonData.put("fileName", intent.getStringExtra("fileName") );
@@ -326,12 +336,26 @@ public class TraceListenerService extends Service {
 
 	public HttpResponse postAPI(String path, String key, String jsonData) {
 		try {
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-		      nameValuePairs.add(new BasicNameValuePair(key,
-		          jsonData));
+			jsonData = jsonData.replace("\\\"", "\"");
+//			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+//		      nameValuePairs.add(new BasicNameValuePair(key,
+//		          jsonData));
+		      
 
+              JSONObject data = new JSONObject();
+              try {
+				data.put(key, jsonData);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		      
+		      StringEntity se = new StringEntity( data.toString());
+              se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+              
 		      postMethod = new HttpPost("http://lrtserver.herokuapp.com/"+path);
-		      postMethod.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+		      postMethod.setEntity(se);
+//		      postMethod.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 		 	
 			return restClient.execute(postMethod);
 		} catch (ClientProtocolException e) {

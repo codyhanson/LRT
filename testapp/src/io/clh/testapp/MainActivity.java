@@ -35,6 +35,7 @@ public class MainActivity extends Activity {
     //Exit button click
     public void clickToExit(View view){
     	LRTracer.stopTrace(this,35,"MainActivity.java","clickToExit");
+    	LRTracer.startTrace(this,38,"MainActivity.java","clickToExit");
 
     	//shut down and exit the app.
     }

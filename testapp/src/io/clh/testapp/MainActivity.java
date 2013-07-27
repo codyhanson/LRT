@@ -10,6 +10,7 @@ public class MainActivity extends Activity {
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
+		LRTracer.startTrace(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
@@ -24,7 +25,7 @@ public class MainActivity extends Activity {
  
     public void goToOtherActivity(View view) 
     {
-    	LRTracer.trace(this,"goToOtherActivity");
+    	LRTracer.trace(this,27,"goToOtherActivity");
         Intent intent = new Intent(getApplicationContext(), OtherActivity.class);
         startActivity(intent);
     }

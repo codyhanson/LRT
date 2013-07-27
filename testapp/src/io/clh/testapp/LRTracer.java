@@ -14,6 +14,8 @@ public class LRTracer {
 
 	private static final String TAG = "LRTracer";
 
+	//provides sequencing information for tracing.
+	//I am not thinking about concurrency issues yet...
 	public static int LRTcounter = 0;
 	
 	//We would probably get these during the instrumentation insertion phase
@@ -21,36 +23,62 @@ public class LRTracer {
 	public static final String appVersion = "0.1.0-alpha";
 
 	
-	public static void startTrace(Context ctx){
+	public static void startTrace(Context ctx,  int lineNumber, String fileName, String functionName){
 		Log.d(TAG, "Send broadcast: Starting new Trace");
     	Intent connBroadcastIntent = new Intent(ACTION_LRT_START);
-    	connBroadcastIntent.putExtra("appName", appName);
+
     	connBroadcastIntent.putExtra("appVersion", appVersion);
+    	
+    	connBroadcastIntent.putExtra("appName", appName); //so they know which app is sending
+    	connBroadcastIntent.putExtra("seq", LRTcounter++);
+    	connBroadcastIntent.putExtra("lineNumber", lineNumber);
+    	connBroadcastIntent.putExtra("fileName", fileName);
+    	connBroadcastIntent.putExtra("methodSig", functionName);
+    	
+    	java.util.Date date= new java.util.Date();
+   	 	Timestamp ts = new Timestamp(date.getTime());
+    	connBroadcastIntent.putExtra("timestamp", ts.toString());
+    	Log.d(TAG, "Timestamp." + ts.toString());
 
     	connBroadcastIntent.setPackage("io.clh.lrt.androidservice");		// Limit who sees the broadcast
     	ctx.sendBroadcast(connBroadcastIntent);
     	Log.d(TAG, "Sent.");
 	}
 	
-	public static void trace(Context ctx, int lineNumber, String functionName) {
+	public static void trace(Context ctx, int lineNumber, String fileName, String functionName) {
     	Intent connBroadcastIntent = new Intent(ACTION_LRT_TRACE);
 
+    	connBroadcastIntent.putExtra("appName", appName); //so they know which app is sending
     	connBroadcastIntent.putExtra("seq", LRTcounter++);
     	connBroadcastIntent.putExtra("lineNumber", lineNumber);
+    	connBroadcastIntent.putExtra("fileName", fileName);
     	connBroadcastIntent.putExtra("methodSig", functionName);
     	
     	java.util.Date date= new java.util.Date();
    	 	Timestamp ts = new Timestamp(date.getTime());
     	connBroadcastIntent.putExtra("timestamp", ts.toString());
+    	Log.d(TAG, "Timestamp." + ts.toString());
 
     	connBroadcastIntent.setPackage("io.clh.lrt.androidservice");		// Limit who sees the broadcast
     	ctx.sendBroadcast(connBroadcastIntent);
     	Log.d(TAG, "Sent.");
 	}
 
-	public static void endTrace(Context ctx, String endType) {
-		Log.d(TAG, "Send broadcast: ending Trace");
+	public static void stopTrace(Context ctx,  int lineNumber, String fileName, String functionName) {
     	Intent connBroadcastIntent = new Intent(ACTION_LRT_STOP);
+		Log.d(TAG, "Send broadcast: ending Trace");
+		
+		connBroadcastIntent.putExtra("appName", appName); //so they know which app is sending
+    	connBroadcastIntent.putExtra("seq", LRTcounter++);
+    	connBroadcastIntent.putExtra("lineNumber", lineNumber);
+    	connBroadcastIntent.putExtra("fileName", fileName);
+    	connBroadcastIntent.putExtra("methodSig", functionName);
+    	
+    	java.util.Date date= new java.util.Date();
+   	 	Timestamp ts = new Timestamp(date.getTime());
+    	connBroadcastIntent.putExtra("timestamp", ts.toString());
+    	Log.d(TAG, "Timestamp." + ts.toString());
+    	
     	connBroadcastIntent.setPackage("io.clh.lrt.androidservice");		// Limit who sees the broadcast
     	ctx.sendBroadcast(connBroadcastIntent);
     	Log.d(TAG, "Sent.");

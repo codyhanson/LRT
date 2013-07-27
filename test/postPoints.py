@@ -24,6 +24,7 @@ for i in range(0,numpts):
     points.append(
         {
             'lineNumber': random.randint(0,500), 
+            'fileName': 'aSourceFile.java', 
             'timestamp': 'a timestamp',
             'seq': random.randint(0,500),
             'methodSig': 'aMethod(int a, int b)' 

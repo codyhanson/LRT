@@ -9,6 +9,7 @@ var mongoUri = process.env.MONGOLAB_URI || 'mongodb://localhost/lrt';
 var tracePointSchema = new mongoose.Schema( 
 {
     lineNumber: Number,
+    fileName: String,
     timestamp: String,
     seq: Number,
     methodSig: String,

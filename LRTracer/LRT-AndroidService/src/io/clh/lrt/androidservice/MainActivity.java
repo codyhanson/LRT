@@ -66,7 +66,7 @@ public class MainActivity extends Activity {
 	private void sendBroadcast(String tag, int line, String msg) {
 		Log.d(TAG, "Send broadcast: " + msg);
 		Intent connBroadcastIntent = new Intent(
-				TraceListenerService.ACTION_LRT_TEST);
+				TraceListenerService.ACTION_LRT_TRACE);
 		connBroadcastIntent.putExtra("tag", tag);
 		connBroadcastIntent.putExtra("line", line);
 		connBroadcastIntent.putExtra("message", msg);
@@ -75,7 +75,7 @@ public class MainActivity extends Activity {
 																		// sees
 																		// the
 																		// broadcast
-		sendBroadcast(TAG, 123, connBroadcastIntent);
+//		sendBroadcast(TAG, 123, connBroadcastIntent);
 		Log.d(TAG, "Sent.");
 	}
 

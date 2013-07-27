@@ -18,10 +18,12 @@ package io.clh.lrt.androidservice;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 
@@ -39,6 +41,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.StrictMode;
+import android.provider.Settings.Secure;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -50,8 +53,15 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.DefaultedHttpParams;
 import org.apache.http.params.HttpParams;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class TraceListenerService extends Service {
+	private static final String TRACE_SERVICE_VERSION = "0.1.0";
+	private static final String API_URL = "lrtserver.herokuapp.com";
+	
+	private HashMap<String, String> appLut = new HashMap<String, String>();
+	
 	private Looper mServiceLooper;
 	private ServiceHandler mServiceHandler;
 	private LinkedList<String> mDataBuffer = new LinkedList<String>();
@@ -67,10 +77,12 @@ public class TraceListenerService extends Service {
 	private static boolean VERBOSE = LOGLEVEL > 2;
 
 	// Intents handled in this Service
-	public static final String ACTION_LRT_TEST = "io.clh.lrt.action.test";
+	public static final String ACTION_LRT_TRACE = "io.clh.lrt.action.trace";
+	public static final String ACTION_LRT_START = "io.clh.lrt.action.start";
+	public static final String ACTION_LRT_STOP = "io.clh.lrt.action.stop";
 
 	// Broadcasts we make and receive
-	public static final String BROADCAST_LRT_TEST = "io.clh.lrt.broadcast.test";
+	public static final String BROADCAST_LRT = "io.clh.lrt.broadcast";
 
 	// Handler that receives messages from the thread
 	private final class ServiceHandler extends Handler {
@@ -116,7 +128,6 @@ public class TraceListenerService extends Service {
 		mServiceHandler = new ServiceHandler(mServiceLooper);
 
 		restClient = new DefaultHttpClient();
-		postMethod = new HttpPost("http://lrtserver.herokuapp.com/");
 
 		//network on main thread H@XXX
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -124,7 +135,7 @@ public class TraceListenerService extends Service {
 		
 		
 		// Register the LRT receiver
-		IntentFilter filter = new IntentFilter(ACTION_LRT_TEST);
+		IntentFilter filter = new IntentFilter(ACTION_LRT_TRACE);
 		registerReceiver(mLrtReceiver, filter);
 
 		setNotification("LRT Tracing Service Running", true);
@@ -185,25 +196,23 @@ public class TraceListenerService extends Service {
 				if (intent != null) {
 					// Get the event that was broadcast
 					String action = intent.getAction();
-					String tag = intent.getStringExtra("tag");
-					int line = intent.getIntExtra("line");
-					String message = intent.getStringExtra("message");
-					Log.e(TAG, "(TAG,LINE,MSG) = " + tag+", "+line+", "+message);
-					if (DEBUG)
-						Toast.makeText(context, tag+", "+line+", "+message,
-								Toast.LENGTH_SHORT).show();
-					String jsonStr = "{ 'tag': '"+tag+"', 'line': "+line+", 'message': '"+message+"' }";
-					mDataBuffer.add(jsonStr);
-					Log.i(TAG, "Added msg to buffer: " + tag+", "+line+", "+message);
-					Log.v(TAG, "Buffer size: " + mDataBuffer.size());
-
-					setNotification(tag+", "+line+", "+message, false);
-					if (action == null) {
-						// Invalid action, exit
-						if (DEBUG)
-							Toast.makeText(context, "LRT - No action given",
-									Toast.LENGTH_SHORT).show();
-						return;
+					if(action.equals(ACTION_LRT_START)) {
+						Log.v(TAG, "START");
+						
+						traceEventStart(context, intent);
+						
+					} else if(action.equals(ACTION_LRT_STOP)) {
+						Log.v(TAG, "STOP");
+						
+						traceEventStop(context, intent);
+						
+					} else if(action.equals(ACTION_LRT_TRACE)) {
+						Log.v(TAG, "TRACE");
+						
+						traceEvent(context, intent);
+						
+					} else {
+						Log.w(TAG, "Unknown action: "+action);
 					}
 				} else {
 					if (DEBUG)
@@ -215,6 +224,53 @@ public class TraceListenerService extends Service {
 			}
 		}
 	};
+	
+	private void traceEventStart(Context context, Intent intent) {
+		JSONObject jsonData = new JSONObject();
+		try {
+			String appName = intent.getStringExtra("appName");
+			jsonData.put("appName", appName );
+			jsonData.put("appVersion", intent.getStringExtra("appVersion") );
+			jsonData.put("osType", "Android");
+			jsonData.put("osVersion", android.os.Build.VERSION.SDK_INT);
+			jsonData.put("traceServiceVersion", TRACE_SERVICE_VERSION);
+			String userId = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
+			
+			HttpResponse response = postAPI("users/"+userId+"/traces", "trace", jsonData.toString());
+			String traceId = "abc123";
+			
+			appLut.put(appName, traceId);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void traceEventStop(Intent intent) {
+		JSONObject jsonData = new JSONObject();
+		try {
+			String appName = intent.getStringExtra("appName");
+			jsonData.put("line", 99);
+			HttpResponse response = postAPI("traces/"+appLut.get(appName)+"/tracepoints", "trace", jsonData.toString());
+			
+			appLut.remove(appName);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void traceEvent(Intent intent) {
+		JSONObject jsonData = new JSONObject();
+		try {
+			String appName = intent.getStringExtra("appName");
+			jsonData.put("line", 99);
+			HttpResponse response = postAPI("traces/"+appLut.get(appName)+"/tracepoints", "trace", jsonData.toString());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	private void setNotification(String msg, boolean ongoing) {
 		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -256,19 +312,21 @@ public class TraceListenerService extends Service {
 		while (mDataBuffer.size() > 0) {
 			String item = mDataBuffer.remove();
 			Log.v(TAG, " '--> " + item);
-			hitAPI(item);
+			hitAPI("debug", item);
 		}
 		Log.v(TAG, "[====/dump====]");
 	}
 
-	public void hitAPI(String msg) {
+	public HttpResponse postAPI(String path, String key, String jsonData) {
 		try {
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-		      nameValuePairs.add(new BasicNameValuePair("message:",
-		          msg));
+		      nameValuePairs.add(new BasicNameValuePair(key,
+		          jsonData));
+
+		      postMethod = new HttpPost("http://lrtserver.herokuapp.com/"+path);
 		      postMethod.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 		 	
-			restClient.execute(postMethod);
+			return restClient.execute(postMethod);
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -276,5 +334,6 @@ public class TraceListenerService extends Service {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return null;
 	}
 }

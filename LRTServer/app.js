@@ -9,21 +9,21 @@ var mongoUri = process.env.MONGOLAB_URI || 'mongodb://localhost/lrt';
 var tracePointSchema = new mongoose.Schema( 
 {
     lineNumber: Number,
-    timestamp: Date,
+    timestamp: String,
     seq: Number,
     methodSig: String,
     traceId: String
-    //some other shit
-
 });
 var TracePoint = mongoose.model('TracePoint',tracePointSchema);
 
 //object model for Trace
 var traceSchema = new mongoose.Schema(
 {
-    os: {type:String, version:String},
+    osType: String, 
+    osVersion: String,
     userId : String,
-    app: {name: String, version:String},
+    appName: String, 
+    appVersion: String,
     traceServiceVersion: String
 }
 );
@@ -82,6 +82,7 @@ app.post('/traces/:traceId/tracepoints', function(req,res) {
     var points = req.body;
     async.each(points,
         function(point, taskCallback) {
+            console.log('ugh:' + point);
             var newPoint = new TracePoint(point);
             newPoint.traceId = req.params.traceId;
             newPoint.save(function(err) { if (err) return err;});
@@ -190,9 +191,10 @@ app.get('/tracespoints/:tracePointId', function (req,res) {
 
 function sendResponse(res,statusCode,responseBodyObject) {
     res.writeHead(statusCode,  {'Content-Type': 'application/json'});
-    res.write(JSON.stringify(responseBodyObject));
+    var bodyString = JSON.stringify(responseBodyObject);
+    res.write(bodyString);
     res.end();
-    console.log("Response: " + statusCode + ' body:' + responseBody);
+    console.log("Response: " + statusCode + ' body:' + bodyString);
 }
 
 

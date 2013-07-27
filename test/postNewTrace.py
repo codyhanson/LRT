@@ -3,6 +3,8 @@
 import requests
 import random
 import sys
+import json
+from pprint import pprint
 
 
 
@@ -14,15 +16,20 @@ else:
 print 'Using api url: ' + api
 
 
-postBody = {
-        'osType': 'Android', 
-        'osVersion':'4.1',
-        'userId': '123',
-        'appName': 'lrtTester', 
-        'appVersion':'1.0',
-        'traceServiceVersion':'alpha'
-        }
-            
-r = requests.post(api + '/users/{0}/traces'.format('123'), postBody)
+postBody = { 'trace': {
+                'osType': 'Android', 
+                'osVersion':'4.1',
+                'userId': '123',
+                'appName': 'lrtTester', 
+                'appVersion':'1.0',
+                'traceServiceVersion':'alpha'
+                }
+           }
+
+print "post body:"
+pprint(postBody)
+                
+headers = {'Content-type': 'application/json'}
+r = requests.post(api + '/users/{0}/traces'.format('123'), data=json.dumps(postBody), headers=headers)
 print "Response:" , r.status_code
 print "Response Body:" , r.text

@@ -65,7 +65,7 @@ app.get('/', function(req,res) {
  * Create a new trace for a particular user
  */
 app.post('/users/:userId/traces', function(req,res) {
-    var newTrace = new Trace(req.body);
+    var newTrace = new Trace(req.body.trace);
     newTrace.userId = req.params.userId;
 
     newTrace.save(function(err) {

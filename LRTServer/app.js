@@ -66,7 +66,7 @@ app.get('/', function(req,res) {
  * Create a new trace for a particular user
  */
 app.post('/users/:userId/traces', function(req,res) {
-    var newTrace = new Trace(req.body.trace);
+    var newTrace = new Trace(req.body);
     newTrace.userId = req.params.userId;
 
     newTrace.save(function(err) {
@@ -86,7 +86,7 @@ app.post('/users/:userId/traces', function(req,res) {
  * so we can effeciently post more than one point at a time.
  */
 app.post('/traces/:traceId/tracepoints', function(req,res) {
-    var points = req.body.items;
+    var points = req.body;
     async.each(points,
         function(point, taskCallback) {
             var newPoint = new TracePoint(point);

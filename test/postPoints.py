@@ -34,7 +34,8 @@ for i in range(0,numpts):
 
 
 
-postBody = {'items': points}
+#postBody = {'items': points}
+postBody = points
 
 print "post body:" 
 pprint(postBody)

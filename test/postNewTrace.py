@@ -16,14 +16,13 @@ else:
 print 'Using api url: ' + api
 
 
-postBody = { 'trace': {
-                'osType': 'Android', 
-                'osVersion':'4.1',
-                'userId': '123',
-                'appName': 'lrtTester', 
-                'appVersion':'1.0',
-                'traceServiceVersion':'alpha'
-                }
+postBody = {
+            'osType': 'Android', 
+            'osVersion':'4.1',
+            'userId': '123',
+            'appName': 'lrtTester', 
+            'appVersion':'1.0',
+            'traceServiceVersion':'alpha'
            }
 
 print "post body:"

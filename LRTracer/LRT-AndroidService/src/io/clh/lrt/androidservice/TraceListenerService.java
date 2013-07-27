@@ -16,7 +16,10 @@
 
 package io.clh.lrt.androidservice;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -56,8 +59,10 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.DefaultedHttpParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 public class TraceListenerService extends Service {
 	private static final String TRACE_SERVICE_VERSION = "0.1.0";
@@ -243,14 +248,27 @@ public class TraceListenerService extends Service {
 			Log.d(TAG, "start trace: "+jsonData.toString());
 			
 			HttpResponse response = postAPI("users/"+userId+"/traces", "trace", jsonData.toString());
-			Log.d(TAG, "start trace got response: "+response.toString());
+			BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+			String json = reader.readLine();
+			JSONTokener tokener = new JSONTokener(json);
+			JSONObject finalResult = new JSONObject(tokener);
+			Log.d(TAG, "start trace got response: "+finalResult.toString());
 			
-			String traceId = "abc123";
+			String traceId = finalResult.getString("_id");
 			
 			appLut.put(appName, traceId);
 			
 			traceEvent(context, intent);
 		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -272,6 +290,7 @@ public class TraceListenerService extends Service {
 			if( appLut.get(appName) == null ) {
 				intent.putExtra("appVersion", "UNKNOWN");
 				traceEventStart(context, intent);
+				return;
 			}
 			
 			jsonData.put("methodSig", intent.getStringExtra("methodSig") );
@@ -280,9 +299,12 @@ public class TraceListenerService extends Service {
 			jsonData.put("lineNumber", intent.getIntExtra("lineNumber", -1));
 			jsonData.put("lineseq", intent.getIntExtra("seq", -1));
 			
+			JSONArray jsonArray = new JSONArray();
+			jsonArray.put(jsonData);
+			
 			Log.d(TAG, "trace event: "+jsonData.toString());
 			
-			HttpResponse response = postAPI("traces/"+appLut.get(appName)+"/tracepoints", "trace", jsonData.toString());
+			HttpResponse response = postAPI("traces/"+appLut.get(appName)+"/tracepoints", "trace", jsonArray.toString());
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -350,7 +372,7 @@ public class TraceListenerService extends Service {
 				e.printStackTrace();
 			}
 		      
-		      StringEntity se = new StringEntity( data.toString());
+		      StringEntity se = new StringEntity( jsonData.toString());
               se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
               
 		      postMethod = new HttpPost("http://lrtserver.herokuapp.com/"+path);

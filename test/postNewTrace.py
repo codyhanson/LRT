@@ -2,9 +2,16 @@
 
 import requests
 import random
+import sys
 
 
-api = 'http://127.0.0.1:3000'
+
+if (sys.argv[1] == 'heroku'):
+    api = 'http://lrtserver.herokuapp.com'
+else:
+    api = 'http://127.0.0.1:3000'
+
+print 'Using api url: ' + api
 
 
 postBody = {

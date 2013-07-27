@@ -7,10 +7,16 @@ import datetime
 from pprint import pprint
 import json
 
-api = 'http://127.0.0.1:3000'
 
 traceId = sys.argv[1]
 numpts = int(sys.argv[2])
+
+if (sys.argv[3] == 'heroku'):
+    api = 'http://lrtserver.herokuapp.com'
+else:
+    api = 'http://127.0.0.1:3000'
+
+print 'Using api url: ' + api
 
 points = []
 

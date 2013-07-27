@@ -143,7 +143,11 @@ public class TraceListenerService extends Service {
 		
 		
 		// Register the LRT receiver
-		IntentFilter filter = new IntentFilter(ACTION_LRT_TRACE);
+		IntentFilter filter = new IntentFilter(ACTION_LRT_START);
+		registerReceiver(mLrtReceiver, filter);
+		filter = new IntentFilter(ACTION_LRT_TRACE);
+		registerReceiver(mLrtReceiver, filter);
+		filter = new IntentFilter(ACTION_LRT_STOP);
 		registerReceiver(mLrtReceiver, filter);
 
 		setNotification("LRT Tracing Service Running", true);
@@ -297,7 +301,7 @@ public class TraceListenerService extends Service {
 			jsonData.put("timestamp", intent.getStringExtra("timestamp") );
 			jsonData.put("fileName", intent.getStringExtra("fileName") );
 			jsonData.put("lineNumber", intent.getIntExtra("lineNumber", -1));
-			jsonData.put("lineseq", intent.getIntExtra("seq", -1));
+			jsonData.put("seq", intent.getIntExtra("seq", -1));
 			
 			JSONArray jsonArray = new JSONArray();
 			jsonArray.put(jsonData);

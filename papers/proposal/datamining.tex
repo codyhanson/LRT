@@ -21,4 +21,9 @@ point of concern for the developer to address.
 \subsection{Button Mashing}
 A great place to insert instrumentation will be in callbacks that respond to user input.
 This will allow us to track how a user interacts with an application, and in what order
-they interact.
+they interact. If we see a succession of quick button presses, maybe we can see that a user was 
+frustrated. Or if we see a checkbox being quickly checked and unchecked, then we can tell that
+the option is perhaps confusing, or causing people to spend a lot of time configuring it.
+On the other end of the spectrum, if we see some statistics about how a majority of users
+never use a particular UI control, it could perhaps be redefined or factored out since it might be
+less valuable to users to have on the screen.

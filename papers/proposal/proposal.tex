@@ -11,15 +11,34 @@
 \title{LRT: The Live Remote Trace service for Mobile Debugging}
 \author{Cody Hanson, Ross Nordstrom\\
         University of Colorado - Colorado Springs\\
+        1420 Austin Bluffs Pkwy,\\
+        Colorado Springs, CO 80918
         \texttt{\{chanson,rnordstr\}@uccs.edu}
        }
-\date{June 2013}
+\date{July 2013}
 
 \maketitle
 
 \begin{abstract}
-A concise and informative abstract will live here one day.
+    As mobile applications become increasingly  more complex and integrated into their
+    environments, testing and debugging for developers has gotten harder.
+    When the behavior of an application depends on environmental factors 
+    such as location, sensor inputs, and realistic cellular and wifi connectivity,
+    it is important for developers to be able to understand how their app
+    behaves out in the real world, not just at their desk.
+
+    In order to enable the collection of remote execution data from real user's
+    mobile devices, we propose the Live Remote Trace system (LRT). Our proposed
+    approach uses instrumentation inserted into the Application Under Test at compile time,
+    which then broadcasts events to a background listener service that is responsible for
+    aggregating trace events and exporting the data to a cloud service of our
+    own design. We address topics for enabling crowd-sourced trace data collection,
+    and possible ways to mine the trace data to give developers actionable 
+    information to improve their application.
 \end{abstract}
+
+\terms{Measurement}
+\keywords{Mobile, Cloud, Debugging}
 
 \section{Introduction}
 One of the key tasks a mobile application developer must undertake is testing 

@@ -3,10 +3,10 @@
 One of the key goals of any instrumentation inserted into an application is 
 that it should not adversely affect the performance or behavior of the 
 application execution. With this fact in mind, we realize that it will be 
-impossible to introduce merely negligable overhead while still gathering
+extremelyu difficult to introduce merely negligable overhead while still gathering
 meaningful amounts of data. Still, we will seek to make data collection
 and exportation as minimally impactful on phone energy, bandwidth and processing
-resources as possible.
+resources as possible within the constraints of the approaches we choose.
 
 \subsection{Server design}
 One of the key pieces of our system is the LRT Server, which serves
@@ -16,18 +16,20 @@ The server will be responsible for adding data that it recieves into
 some datastore that it has access to. We will initially do minimal realtime
 processing of the data, but could expand this in the future to improve the
 analytical power of the service. The first priority is for the server to quickly
-and efficiently persist the data that it recieves.
+and efficiently persist the data that it recieves, in an organized
+and scalable way.
 
 In light of these requirements, we think the Node.js \cite{node}
 project to be a good fit for our server platform.
 Node.js is an asynchronous, event driven server 
-which interprets JavaScript with the V8 JavaScript engine \cite{V8-javascript} that
+which interprets JavaScript code written by the developer with the 
+V8 JavaScript engine \cite{V8-javascript} that
 powers the Google Chrome browser. Node.js is especially good
 at maintaining many concurrent connections in a single threaded implementation.
 Because it doesn't block on IO operations, we think it will be an efficient broker
-between the client mobile phones and the datastore. but will use a different server
+between the client mobile phones and the datastore. We will use a different server
 system to perform analytics
-because any heavy processing by a request can tie up Node's event loop.
+because any heavy processing by a single request can tie up Node's event loop.
 Due to Node's rich community and JavaScript platform,
 we will be able to prototype the server software with minimal development friction.
 
@@ -42,7 +44,7 @@ messages, we do not suffer the TCP and HTTP connection establishment overhead
 for each trace event. Websockets have an advantage over a custom TCP protocol
 in that because it looks like HTTP traffic, it is able to pass through most
 firewalls. It is also easier on the server side to implement a websocket
-connection using Node.js than a traditional TCP stream.
+connection using Node.js than a traditional TCP stream protocol.
 
 Our study of \cite{PeriodicTransfers} suggests that
 our instrumentation should follow a more sparse communications pattern, making
@@ -54,7 +56,9 @@ Each HTTP POST could send an array of compressed trace events, making
 efficient use of the cellular or wifi radio. Another approach could be to 
 devise a way to detect when the radio is already awake, and make a transmission
 opportunistically. REST also has the advantage of being the de-facto communications
-scheme for cloud services that use HTTP. Implementing a RESTful API using Node.js is trivial.
+scheme for cloud services that use HTTP. Implementing a RESTful API using Node.js is made easy
+by many software libraries that exist. REST is also known for its scalability and ease of 
+maintainability.
 
 If it seems that accessing a cloud server is too expensive, this same technique could
 be applied to a server on the LAN. A local server would have reduced latency, and higher network throughput,
@@ -88,7 +92,7 @@ background service via static methods in a Java class we will create.
 The service will recieve events from applications under test, buffering them until the
 next appropriate time to export them to the server. This allows us to support 
 tracing for any and all apps on the device so long as our service is running and 
-that app has been injected with broadcasting code.
+that the app under test has been instrumented with our broadcasting code.
 
 \subsection{Enabling ease of use with automatic instrumentation}
 If time permits, we would like to build an automated instrumentation insertion 
@@ -99,6 +103,6 @@ app. Possible insertion points of interest could be program structures such as t
 line of each method, or within \texttt{if/else} blocks, or within the body of
 a loop structure. The script would also populate the trace calls with relevant data
 for you, such as line number, class, method, and perhaps even basic state info (battery
-level, CPU usage, etc...).
+level, CPU usage, etc).
 
 

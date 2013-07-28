@@ -4,16 +4,16 @@ One of the key issues with testing mobile applications is the sheer number
 of different scenarios that can affect the execution and performance
 of the App under test. It is impossible for developers to test their application
 on every hardware configuration, for all use models, for all environmental scenarios.
-Due to this fact, we believe that using the LRT system to 'crowd source' data for developers
-is the answer.
+We believe that using the LRT system to 'crowd source' data for developers
+is the answer to this problem.
 
 \subsection{Motivating Participation}
 \label{subsectionsection:motivatingparticipation}
 Any savvy user will understand that opting into using this system comes at a cost to themselves.
 Their phone will be expending extra energy and network capacity to support the tracing of 
 other peoples applications, which they build for fun and profit.
-In order to encourage more users to opt in, we will need to compensate them for their
-help, or make it fun for them to volunteer.
+In order to encourage more users to opt in, thus expanding the useful pool from developers to draw from,
+we will need to compensate them for their help, or make it fun for them to volunteer.
 
 \subsection{Gameification}
 A common way to motivate user engagement is with gameification. This is typically embodied
@@ -29,7 +29,7 @@ could be on ``testing confidence'', or the variety of device variations their ap
 This would encourage the use of higher-subscription tiers of the testing service.
 
 \subsection{A Market Based Approach}
-One of the best ways to reward participation is with money. As the relayer between app developers
+One of the best ways incentivize behavior is with money. As the relayer between app developers
 and app testers, we could charge the developers to have their apps tested. This might be priced
 as a metered, tiered approach - using more testers costs more, and getting results quicker costs more.
 On the tester side, we could reward users in a number of ways. One would be to simply put a
@@ -41,4 +41,5 @@ ideas and place a higher value on less frequently produced trace events. In all 
 less frequent events would be bugs; Therefore, finding bugs and boundary cases is worth more to the 
 testers than following "hot paths". By encouraging testers to search for bugs and edge cases, we
 provide a higher value to the developers, and a larger bounty for the testers.
+An example of a service which uses some of these techniques is Bugcrowd\cite{Bugcrowd}.
 

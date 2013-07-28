@@ -1,6 +1,6 @@
 \section{Challenges}
 \label{section:challenges}
-Due to the large scope of this project, there are a number of challenges we must overcome.
+Due to the ambitious technical scope of this project, there are a number of challenges we must overcome.
 In this section, we overview the main challenges. Section \ref{section:proposeddesign} discusses
 our solutions to these challenges.
 
@@ -11,6 +11,7 @@ but to expedite prototyping, we have opted for manual insertion initially.
 While there has been some of research about efficiently and conveniently inserting
 instrumentation into mobile apps, much of it targets a lower-level implementation than
 we hope to achieve, such as coding at the kernel level to trace taints \cite{TaintDroid}.
+There is also the Aspect Oriented Programming approach \cite{COCA}, as mentioned in Related Work.
 
 \subsection{Reporting Trace Data to the Server}
 We must implement our data reports to the backend server in such a way that it
@@ -42,15 +43,16 @@ to expose statistical data such as average time to load a view, or average
 application startup time. Knowing that baseline, a developer could know 
 if maybe they need to improve their application in these areas.
 
-\subsection{Application Adaptation}
-The final piece that would make this tool truly unique would be to take the output
-of our analytics \ref{Analytics} to drive the application to change the UI to
-another layout that would provide a better user experience. The major difficulty will
-be finding a reasonable way to change the UI that is not over complicated, but will
-have a positive impact on the UI. Additionally, telling the application what to change
-and how will be challenging. Something we can do to simplify this is to constrain what
-we are willing to change to list-based views, as lists are common and can be displayed
-in a number of ways, such as scrolling listviews, grids, or paged lists.
+% clh: This section seems a bit unfocused and out of place, compared to the rest of the writing.
+%\subsection{Application Adaptation}
+%The final piece that would make this tool truly unique would be to take the output
+%of our analytics \ref{Analytics} to drive the application to change the UI to
+%another layout that would provide a better user experience. The major difficulty will
+%be finding a reasonable way to change the UI that is not over complicated, but will
+%have a positive impact on the UI. Additionally, telling the application what to change
+%and how will be challenging. Something we can do to simplify this is to constrain what
+%we are willing to change to list-based views, as lists are common and can be displayed
+%in a number of ways, such as scrolling listviews, grids, or paged lists.
 
 \subsection{Participation}
 Our final challenge will be encouraging users to test these LRT-enabled apps. Our
@@ -58,6 +60,6 @@ proposal relies on crowdsourcing to provide the data we need to improve user
 experience by testing with real people. Since we want regular people, not employees
 of the app, to do the testing, we will need to provide incentive. Some possibilities
 for incentivizing the use of our tool are discussed in \ref{section:motivatingparticipation}:
-market base approach (pay them), and gameification.
+market base approach (let users earn money by opting in to testing), and gameification.
 
 

@@ -1,7 +1,7 @@
+M
 \section{Related Work}
 \label{section:relatedwork}
-Existing techniques for tracing program execution are decades old, and usually 
-involve writing lines of output that the programmer purposefully incorporates 
+Existing techniques for tracing program execution are decades old, and usually involve writing lines of output that the programmer purposefully incorporates 
 in the code into a file on disk, or exported to a logging server, as in syslog. 
 Disk output can slow down a program, and the amount of log information that 
 builds up could be too large for the mobile device to store. The work done in 
@@ -32,11 +32,18 @@ We can also draw ideas from the taint tracing techniques discussed in
 the overhead of our tool. While we could have leveraged their method of 
 tracing by developing near the kernel, we opted for the convenience and 
 speed of development using built-in Android tools like Broadcasts to prove
-out the idea more quickly. The techniques discussed in \cite{PeriodicTransfers}
+out the idea more quickly. 
+
+The techniques discussed in \cite{PeriodicTransfers}
 will be a powerful resource for implementing our event reporting service 
-with minimized energy and network resource consumption.
+with minimized energy and network resource consumption. This work shows that
+it may be a good stategy to export trace data infrequently, when using the 
+cellular radio. This is due to the fact that the radio stays powered on for some 
+time after a transmission, and can be inneficient for poorly spaced network communication events.
 
-TODO: cite COCA: Computation Offload to Clouds Using AOP
-
-TODO: cite JaBUTi/ME
+The work done in \cite{COCA} explains a way to automatically insert code
+into a Java bytecode application using the AspectJ compiler, and 
+Aspect Oriented Programming. This automated code insertion technique
+could be an interesting avenue of experimentation for us, as a way to
+automatically instrument a precompiled Android application.
 
